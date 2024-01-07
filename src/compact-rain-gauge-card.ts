@@ -9,7 +9,6 @@ import {
   ActionHandlerEvent,
   handleAction,
   LovelaceCardEditor,
-  getLovelace,
 } from 'custom-card-helpers'; // This is a community maintained npm module with common helper functions/types. https://github.com/custom-cards/custom-card-helpers
 
 import type { CompactRainGaugeCardConfig } from './types';
