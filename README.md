@@ -40,7 +40,7 @@ type: custom:compact-rain-gauge-card
 entity: sensor.rain_daily
 ```
 
-![Default](https://github.com/jesmak/compact-rain-gauge-card/blob/master/docs/images/compact-rain-gauge-card.png?raw=true)
+![Default](https://github.com/jesmak/compact-rain-gauge-card/blob/main/docs/images/compact-rain-gauge-card.png?raw=true)
 
 
 ## Options
