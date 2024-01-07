@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { LitElement, html, TemplateResult, css, CSSResultGroup } from 'lit';
 import { HomeAssistant, fireEvent, LovelaceCardEditor } from 'custom-card-helpers';
 
 import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
-import { RainGaugeCardConfig } from './types';
+import { CompactRainGaugeCardConfig } from './types';
 import { customElement, property, state } from 'lit/decorators';
 import { formfieldDefinition } from '../elements/formfield';
 import { selectDefinition } from '../elements/select';
@@ -12,10 +13,10 @@ import { textfieldDefinition } from '../elements/textfield';
 import { CARD_LANGUAGES } from './localize/localize';
 
 @customElement('rain-gauge-card-editor')
-export class RainGaugeCardEditor extends ScopedRegistryHost(LitElement) implements LovelaceCardEditor {
+export class CompactRainGaugeCardEditor extends ScopedRegistryHost(LitElement) implements LovelaceCardEditor {
   @property({ attribute: false }) public hass?: HomeAssistant;
 
-  @state() private _config?: RainGaugeCardConfig;
+  @state() private _config?: CompactRainGaugeCardConfig;
 
   @state() private _helpers?: any;
 
@@ -28,7 +29,7 @@ export class RainGaugeCardEditor extends ScopedRegistryHost(LitElement) implemen
     ...formfieldDefinition,
   };
 
-  public setConfig(config: RainGaugeCardConfig): void {
+  public setConfig(config: CompactRainGaugeCardConfig): void {
     this._config = config;
 
     this.loadCardHelpers();
@@ -40,10 +41,6 @@ export class RainGaugeCardEditor extends ScopedRegistryHost(LitElement) implemen
     }
 
     return true;
-  }
-
-  get _name(): string {
-    return this._config?.name || '';
   }
 
   get _entity(): string {
@@ -74,14 +71,6 @@ export class RainGaugeCardEditor extends ScopedRegistryHost(LitElement) implemen
     return this._config?.fill_drop_colour || '';
   }
 
-  get _show_warning(): boolean {
-    return this._config?.show_warning || false;
-  }
-
-  get _show_error(): boolean {
-    return this._config?.show_error || false;
-  }
-
   protected render(): TemplateResult | void {
     if (!this.hass || !this._helpers) {
       return html``;
@@ -105,12 +94,6 @@ export class RainGaugeCardEditor extends ScopedRegistryHost(LitElement) implemen
           return html`<mwc-list-item .value=${entity}>${entity}</mwc-list-item>`;
         })}
       </mwc-select>
-      <mwc-textfield
-        label="Name (Optional)"
-        .value=${this._name}
-        .configValue=${'name'}
-        @input=${this._valueChanged}
-      ></mwc-textfield>
       <mwc-textfield
         label="Fill drop colour (Optional)"
         .value=${this._fill_drop_colour}
@@ -145,9 +128,9 @@ export class RainGaugeCardEditor extends ScopedRegistryHost(LitElement) implemen
       ></mwc-textfield>
       <mwc-textfield
         label="Max level (Optional)"
-        max=200
-        min=1
-        step=1
+        max="200"
+        min="1"
+        step="1"
         .value=${this._max_level}
         .configValue=${'max_level'}
         @input=${this._valueChanged}
@@ -165,20 +148,6 @@ export class RainGaugeCardEditor extends ScopedRegistryHost(LitElement) implemen
           return html`<mwc-list-item .value=${hourly_rate_entity}>${hourly_rate_entity}</mwc-list-item>`;
         })}
       </mwc-select>
-      <mwc-formfield .label=${`Toggle warning ${this._show_warning ? 'off' : 'on'}`}>
-        <mwc-switch
-          .checked=${this._show_warning !== false}
-          .configValue=${'show_warning'}
-          @change=${this._valueChanged}
-        ></mwc-switch>
-      </mwc-formfield>
-      <mwc-formfield .label=${`Toggle error ${this._show_error ? 'off' : 'on'}`}>
-        <mwc-switch
-          .checked=${this._show_error !== false}
-          .configValue=${'show_error'}
-          @change=${this._valueChanged}
-        ></mwc-switch>
-      </mwc-formfield>
     `;
   }
 
