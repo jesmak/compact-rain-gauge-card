@@ -1,6 +1,6 @@
-# Rain Gauge Card
+# Compact Rain Gauge Card
 
-A Lovelace card that shows the rain gauge for [Home Assistant](https://home-assistant.io/).
+A compact Lovelace card that shows the rain gauge for [Home Assistant](https://home-assistant.io/). Meant to be used inside a horizontal-stack.
 
 [![GitHub Release][releases-shield]][releases-link] [![GitHub Release Date][release-date-shield]][releases-link] [![GitHub Releases][latest-download-shield]][traffic-link] [![GitHub Releases][total-download-shield]][traffic-link]
 
@@ -8,28 +8,15 @@ A Lovelace card that shows the rain gauge for [Home Assistant](https://home-assi
 
 ![Project Maintenance][maintenance-shield] [![GitHub Activity][activity-shield]][activity-link] [![Open bugs][bugs-shield]][bugs-link] [![Open enhancements][enhancements-shield]][enhancement-link]
 
-[![Community Forum][forum-shield]][forum-link]
-
 ## Installation
-
-### [HACS](https://hacs.xyz/) (Home Assistant Community Store)
-
-1. Go to HACS page on your Home Assistant instance
-1. Select `Frontend`
-1. Press add icon and search for `rain-gauge`
-1. Select Rain Gauge Card repo and install
-1. Force refresh the Home Assistant page (<kbd>Ctrl</kbd> + <kbd>F5</kbd>)
-1. Add rain-gauge-card to your page
-
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=t1gr0u&repository=rain-gauge-card&category=plugin)
 
 ### Manual
 
-1. Download the 'rain-gauge-card.js' from the latest [release](https://github.com/t1gr0u/rain-gauge-card/releases) (with right click, save link as)
+1. Download the 'compact-rain-gauge-card.js' from the latest [release](https://github.com/jesmak/compact-rain-gauge-card/releases) (with right click, save link as)
 1. Place the downloaded file on your Home Assistant machine in the `config/www` folder (when there is no `www` folder in the folder where your `configuration.yaml` file is, create it and place the file there)
 1. In Home Assistant go to `Configuration->Lovelace Dashboards->Resources` (When there is no `resources` tag on the `Lovelace Dashboard` page, enable advanced mode in your account settings, and retry this step)
 1. Add a new resource
-   1. Url = `/local/rain-gauge-card.js`
+   1. Url = `/local/compact-rain-gauge-card.js`
    1. Resource type = `module`
 1. Force refresh the Home Assistant page (<kbd>Ctrl</kbd> + <kbd>F5</kbd>)
 1. Add rain-gauge-card to your page
@@ -40,7 +27,7 @@ A Lovelace card that shows the rain gauge for [Home Assistant](https://home-assi
 - Or add the card manually with the following (minimal) configuration:
 
 ```yaml
-type: custom:rain-gauge-card
+type: custom:compact-rain-gauge-card
 entity: sensor.rain_daily
 ```
 
@@ -49,11 +36,11 @@ entity: sensor.rain_daily
 ### Default
 
 ```yaml
-type: custom:rain-gauge-card
+type: custom:compact-rain-gauge-card
 entity: sensor.rain_daily
 ```
 
-![Default](https://github.com/t1gr0u/rain-gauge-card/blob/master/docs/images/rain-gauge-card.png?raw=true)
+![Default](https://github.com/jesmak/compact-rain-gauge-card/blob/master/docs/images/compact-rain-gauge-card.png?raw=true)
 
 
 ## Options
@@ -64,8 +51,6 @@ entity: sensor.rain_daily
 | name              | string  | **Optional** | Card name                                                                | `Rain Gauge`        |
 | border_colour     | string  | **Optional** | Change the border colour                                                 | `#000000`           |
 | fill_drop_colour  | string  | **Optional** | Change the drop colour                                                   | `#04ACFF`           |
-| show_error        | boolean | **Optional** | Show what an error looks like for the card                               | `false`             |
-| show_warning      | boolean | **Optional** | Show what a warning looks like for the card                              | `false`             |
 | entity            | string  | **Required** | Home Assistant entity ID.                                                | `none`              |
 | max_level         | number  | **Optional** | Override the max level in the drop (will take inches too)                | `40mm`              |
 | language          | string  | **Optional** | The 2 character that determines the language                             | `en`                |
@@ -87,25 +72,25 @@ entity: sensor.rain_daily
 | haptic          | string | **Optional** | Haptic feedback _success, warning, failure, light, medium, heavy, selection_                                                           | `none`      |
 | repeat          | number | **Optional** | How often to repeat the `hold_action` in milliseconds.                                                                                 | `none`      |
 
-
 ### Language
 
 The following languages are supported:
 
-| Language  | Yaml value | Supported | Translated by                                                                       |
-| --------- | ---------- | --------- | ----------------------------------------------------------------------------------- |
-| Czech     | `cs`       | v1.3.1    | [@MiisaTrAnCe](https://github.com/MiisaTrAnCe)                                      |
-| Danish    | `da`       | v1.3.1    | [@Tntdruid](https://github.com/Tntdruid)                                            |
-| Dutch     | `nl`       | v1.3.1    | [@jobvk](https://github.com/jobvk)                                                  |
-| English   | `en`       | v1.0.0    | [@t1gr0u](https://github.com/t1gr0u)                                                |
-| French    | `fr`       | v1.0.0    | [@t1gr0u](https://github.com/t1gr0u)                                                |
-| Italian   | `it`       | v1.4.0    | [@StefanoGiugliano](https://github.com/StefanoGiugliano)                            |
-| German    | `de`       | v1.3.1    | [@AndLindemann](https://github.com/AndLindemann)                                    |
-| Hungarian | `ha`       | v1.3.1    | [@erelke](https://github.com/erelke)                                                |
-| Portuguese| `pt`       | v1.1.0    | [@ViPeR5000](https://github.com/viper5000)                                          |
-| Slovakia  | `sk`       | v1.4.0    | [@milandzuris](https://github.com/milandzuris)                                      |
-| Slovenian | `sl`       | v1.1.0    | [@mnheia](https://github.com/mnheia)                                                |
-| Swedish   | `sv`       | v1.4.0    | [@tangix](https://github.com/tangix)                                                |
+| Language  | Yaml value | Supported | Translated by                                                                               |
+| --------- | ---------- | --------- | ------------------------------------------------------------------------------------------- |
+| Czech     | `cs`       | v1.0.0    | [@MiisaTrAnCe](https://github.com/MiisaTrAnCe) - copied over from rain-gauge-card           |
+| Danish    | `da`       | v1.0.0    | [@Tntdruid](https://github.com/Tntdruid) - copied over from rain-gauge-card                 |
+| Dutch     | `nl`       | v1.0.0    | [@jobvk](https://github.com/jobvk) - copied over from rain-gauge-card                       |
+| English   | `en`       | v1.0.0    | [@t1gr0u](https://github.com/t1gr0u) - copied over from rain-gauge-card                     |
+| French    | `fi`       | v1.0.0    | [@jesmak](https://github.com/jesmak)                                                        |
+| French    | `fr`       | v1.0.0    | [@t1gr0u](https://github.com/t1gr0u) - copied over from rain-gauge-card                     |
+| Italian   | `it`       | v1.0.0    | [@StefanoGiugliano](https://github.com/StefanoGiugliano) - copied over from rain-gauge-card |
+| German    | `de`       | v1.0.0    | [@AndLindemann](https://github.com/AndLindemann) - copied over from rain-gauge-card         |
+| Hungarian | `ha`       | v1.0.0    | [@erelke](https://github.com/erelke) - copied over from rain-gauge-card                     |
+| Portuguese| `pt`       | v1.0.0    | [@ViPeR5000](https://github.com/viper5000) - copied over from rain-gauge-card               |
+| Slovakia  | `sk`       | v1.0.0    | [@milandzuris](https://github.com/milandzuris) - copied over from rain-gauge-card           |
+| Slovenian | `sl`       | v1.0.0    | [@mnheia](https://github.com/mnheia) - copied over from rain-gauge-card                     |
+| Swedish   | `sv`       | v1.0.0    | [@tangix](https://github.com/tangix) - copied over from rain-gauge-card                     |
 
 #### How to add a language
 
@@ -118,8 +103,7 @@ If you wish to add a language please follow these steps:
 
 ## Thanks to
 
-- [@iantrich](https://www.github.com/iantrich) for the [boiler-plate card](https://github.com/custom-cards/boilerplate-card), which got me started
-
+- [@t1gr0u](https://www.github.com/t1gr0u) for the [rain-gauge-card](https://github.com/t1gr0u/rain-gauge-card). This is basically just a fork of that card with UI changes to make it more compact so that it'll work nicely in a horizontal-stack.
 
 ## Support
 

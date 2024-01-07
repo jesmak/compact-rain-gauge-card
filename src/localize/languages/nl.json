@@ -2,8 +2,6 @@
   "common": {
     "version": "Versie",
     "invalid_configuration": "Ongeldige configuratie",
-    "show_warning": "Toon Waarschuwing",
-    "show_error": "Toon fout",
     "rate": "Snelheid",
     "total": "Totaal"
   }

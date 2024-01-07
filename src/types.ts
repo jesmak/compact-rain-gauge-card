@@ -2,18 +2,15 @@ import { ActionConfig, LovelaceCard, LovelaceCardConfig, LovelaceCardEditor } fr
 
 declare global {
   interface HTMLElementTagNameMap {
-    'rain-gauge-card-editor': LovelaceCardEditor;
+    'compact-rain-gauge-card-editor': LovelaceCardEditor;
     'hui-error-card': LovelaceCard;
   }
 }
 
-export interface RainGaugeCardConfig extends LovelaceCardConfig {
+export interface CompactRainGaugeCardConfig extends LovelaceCardConfig {
   type: string;
   name?: string;
   border_colour?: string;
-  show_warning?: boolean;
-  show_error?: boolean;
-  test_gui?: boolean;
   entity?: string;
   language?: string;
   is_imperial?: boolean;
