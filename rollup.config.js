@@ -39,7 +39,7 @@ const plugins = [
 
 export default [
   {
-    input: 'src/rain-gauge-card.ts',
+    input: 'src/compact-rain-gauge-card.ts',
     output: {
       dir: 'dist',
       format: 'es',
