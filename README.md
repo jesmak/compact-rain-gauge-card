@@ -109,22 +109,20 @@ If you wish to add a language please follow these steps:
 
 Clone and create a PR to help make the card even better.
 
-[releases-shield]: https://img.shields.io/github/release/t1gr0u/rain-gauge-card.svg?style=flat-square
-[releases-link]: https://github.com/t1gr0u/rain-gauge-card/releases/latest
-[release-date-shield]: https://img.shields.io/github/release-date/t1gr0u/rain-gauge-card?style=flat-square
-[latest-download-shield]: https://img.shields.io/github/downloads/t1gr0u/rain-gauge-card/latest/total?style=flat-square&label=downloads%20latest%20release
-[total-download-shield]: https://img.shields.io/github/downloads/t1gr0u/rain-gauge-card/total?style=flat-square&label=total%20views
-[traffic-link]: https://github.com/t1gr0u/rain-gauge-card/graphs/traffic
-[hacs-shield]: https://img.shields.io/badge/HACS-Default-orange.svg?style=flat-square
-[hacs-link]: https://github.com/custom-components/hacs
+[releases-shield]: https://img.shields.io/github/release/jesmak/compact-rain-gauge-card.svg?style=flat-square
+[releases-link]: https://github.com/jesmak/compact-rain-gauge-card/releases/latest
+[release-date-shield]: https://img.shields.io/github/release-date/jesmak/compact-rain-gauge-card?style=flat-square
+[latest-download-shield]: https://img.shields.io/github/downloads/jesmak/compact-rain-gauge-card/latest/total?style=flat-square&label=downloads%20latest%20release
+[total-download-shield]: https://img.shields.io/github/downloads/jesmak/compact-rain-gauge-card/total?style=flat-square&label=total%20views
+[traffic-link]: https://github.com/jesmak/compact-rain-gauge-card/graphs/traffic
 [home-assistant-shield]: https://img.shields.io/badge/Home%20Assistant-visual%20editor/yaml-green?style=flat-square
 [home-assistant-link]: https://www.home-assistant.io/
 [license-shield]: https://img.shields.io/github/license/custom-cards/boilerplate-card.svg?style=flat-square
 [license-link]: LICENSE.md
-[activity-shield]: https://img.shields.io/github/commit-activity/y/t1gr0u/rain-gauge-card.svg?style=flat-square
-[activity-link]: https://github.com/t1gr0u/rain-gauge-card/commits/master
-[bugs-shield]: https://img.shields.io/github/issues/t1gr0u/rain-gauge-card/bug?color=red&style=flat-square&label=bugs
-[bugs-link]: https://github.com/t1gr0u/rain-gauge-card/labels/bug
-[enhancements-shield]: https://img.shields.io/github/issues/t1gr0u/rain-gauge-card/enhancement?color=blue&style=flat-square&label=enhancements
-[enhancement-link]: https://github.com/t1gr0u/rain-gauge-card/labels/enhancement
-[maintenance-shield]: https://img.shields.io/maintenance/yes/2023.svg?style=flat-square
+[activity-shield]: https://img.shields.io/github/commit-activity/y/jesmak/compact-rain-gauge-card.svg?style=flat-square
+[activity-link]: https://github.com/jesmak/compact-rain-gauge-card/commits/master
+[bugs-shield]: https://img.shields.io/github/issues/jesmak/compact-rain-gauge-card/bug?color=red&style=flat-square&label=bugs
+[bugs-link]: https://github.com/jesmak/compact-rain-gauge-card/labels/bug
+[enhancements-shield]: https://img.shields.io/github/issues/jesmak/compact-rain-gauge-card/enhancement?color=blue&style=flat-square&label=enhancements
+[enhancement-link]: https://github.com/jesmak/compact-rain-gauge-card/labels/enhancement
+[maintenance-shield]: https://img.shields.io/maintenance/yes/2024.svg?style=flat-square
