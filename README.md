@@ -4,7 +4,7 @@ A compact Lovelace card that shows the rain gauge for [Home Assistant](https://h
 
 [![GitHub Release][releases-shield]][releases-link] [![GitHub Release Date][release-date-shield]][releases-link] [![GitHub Releases][latest-download-shield]][traffic-link] [![GitHub Releases][total-download-shield]][traffic-link]
 
-[![HACS Badge][hacs-shield]][hacs-link] [![HomeAssistant][home-assistant-shield]][home-assistant-link] [![License][license-shield]][license-link]
+[![HomeAssistant][home-assistant-shield]][home-assistant-link] [![License][license-shield]][license-link]
 
 ![Project Maintenance][maintenance-shield] [![GitHub Activity][activity-shield]][activity-link] [![Open bugs][bugs-shield]][bugs-link] [![Open enhancements][enhancements-shield]][enhancement-link]
 
