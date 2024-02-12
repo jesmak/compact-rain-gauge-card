@@ -82,7 +82,7 @@ The following languages are supported:
 | Danish    | `da`       | v1.0.0    | [@Tntdruid](https://github.com/Tntdruid) - copied over from rain-gauge-card                 |
 | Dutch     | `nl`       | v1.0.0    | [@jobvk](https://github.com/jobvk) - copied over from rain-gauge-card                       |
 | English   | `en`       | v1.0.0    | [@t1gr0u](https://github.com/t1gr0u) - copied over from rain-gauge-card                     |
-| French    | `fi`       | v1.0.0    | [@jesmak](https://github.com/jesmak)                                                        |
+| Finnish   | `fi`       | v1.0.0    | [@jesmak](https://github.com/jesmak)                                                        |
 | French    | `fr`       | v1.0.0    | [@t1gr0u](https://github.com/t1gr0u) - copied over from rain-gauge-card                     |
 | Italian   | `it`       | v1.0.0    | [@StefanoGiugliano](https://github.com/StefanoGiugliano) - copied over from rain-gauge-card |
 | German    | `de`       | v1.0.0    | [@AndLindemann](https://github.com/AndLindemann) - copied over from rain-gauge-card         |
