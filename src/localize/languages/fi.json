@@ -38,7 +38,7 @@
     "animate_rain_helper": "Pinta liikkuu ja pisaroita putoaa, kun voimakkuuden sensorin mukaan sataa.",
     "show_scale": "Asteikko",
     "show_intensity": "Voimakkuuspalkit",
-    "show_intensity_helper": "Voimakkuuden vieressä: heikkoa, kohtalaista vai voimakasta sadetta.",
+    "show_intensity_helper": "Näyttää voimakkuuden vieressä, onko sade heikkoa, kohtalaista vai voimakasta.",
     "show_yesterday": "Eilinen sademäärä",
     "show_week": "Viimeiset 7 päivää",
     "show_month": "Viimeiset 30 päivää",
@@ -48,7 +48,7 @@
     "show_rate_chart": "Sateen voimakkuuden kaavio",
     "show_rate_chart_helper": "Tarvitsee voimakkuuden sensorin.",
     "rate_chart_hours": "Tunteja voimakkuuden kaaviossa",
-    "rate_chart_hours_helper": "Enintään 168 eli viikko: tallennin säilyttää historiaa oletuksena kymmenen päivää."
+    "rate_chart_hours_helper": "Enintään 168 eli viikko. Tallennin säilyttää historiaa oletuksena kymmenen päivää."
   },
   "intensity": {
     "none": "Ei sada",

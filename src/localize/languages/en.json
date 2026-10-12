@@ -38,7 +38,7 @@
     "animate_rain_helper": "The surface moves and drops fall while the rate sensor says it rains.",
     "show_scale": "Scale marks",
     "show_intensity": "Intensity bars",
-    "show_intensity_helper": "Beside the rate: light, moderate or heavy rain.",
+    "show_intensity_helper": "Shows beside the rate whether the rain is light, moderate or heavy.",
     "show_yesterday": "Yesterday's rain",
     "show_week": "Last 7 days",
     "show_month": "Last 30 days",
@@ -48,7 +48,7 @@
     "show_rate_chart": "Rain rate chart",
     "show_rate_chart_helper": "Needs the rain rate sensor.",
     "rate_chart_hours": "Hours in the rate chart",
-    "rate_chart_hours_helper": "Up to 168, a week: the recorder keeps the rate's history for ten days by default."
+    "rate_chart_hours_helper": "Up to 168, a week. The recorder keeps the rate's history for ten days by default."
   },
   "intensity": {
     "none": "Not raining",

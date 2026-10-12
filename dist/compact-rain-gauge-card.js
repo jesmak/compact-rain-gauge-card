@@ -1,4 +1,4 @@
-/*! compact-rain-gauge-card 2.0.0 | MIT License */
+/*! compact-rain-gauge-card 2.0.1 | MIT License */
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __decorateClass = (decorators, target, key, kind) => {
@@ -888,7 +888,7 @@ function indexAt(kind, items, share, start, end) {
 }
 
 // src/const.ts
-var CARD_VERSION = "2.0.0";
+var CARD_VERSION = "2.0.1";
 var DEFAULT_MAX_LEVEL_MM = 40;
 var MM_PER_INCH = 25.4;
 
@@ -1111,7 +1111,7 @@ var en_default = {
     animate_rain_helper: "The surface moves and drops fall while the rate sensor says it rains.",
     show_scale: "Scale marks",
     show_intensity: "Intensity bars",
-    show_intensity_helper: "Beside the rate: light, moderate or heavy rain.",
+    show_intensity_helper: "Shows beside the rate whether the rain is light, moderate or heavy.",
     show_yesterday: "Yesterday's rain",
     show_week: "Last 7 days",
     show_month: "Last 30 days",
@@ -1121,7 +1121,7 @@ var en_default = {
     show_rate_chart: "Rain rate chart",
     show_rate_chart_helper: "Needs the rain rate sensor.",
     rate_chart_hours: "Hours in the rate chart",
-    rate_chart_hours_helper: "Up to 168, a week: the recorder keeps the rate's history for ten days by default."
+    rate_chart_hours_helper: "Up to 168, a week. The recorder keeps the rate's history for ten days by default."
   },
   intensity: {
     none: "Not raining",
@@ -1173,7 +1173,7 @@ var fi_default = {
     animate_rain_helper: "Pinta liikkuu ja pisaroita putoaa, kun voimakkuuden sensorin mukaan sataa.",
     show_scale: "Asteikko",
     show_intensity: "Voimakkuuspalkit",
-    show_intensity_helper: "Voimakkuuden vieress\xE4: heikkoa, kohtalaista vai voimakasta sadetta.",
+    show_intensity_helper: "N\xE4ytt\xE4\xE4 voimakkuuden vieress\xE4, onko sade heikkoa, kohtalaista vai voimakasta.",
     show_yesterday: "Eilinen sadem\xE4\xE4r\xE4",
     show_week: "Viimeiset 7 p\xE4iv\xE4\xE4",
     show_month: "Viimeiset 30 p\xE4iv\xE4\xE4",
@@ -1183,7 +1183,7 @@ var fi_default = {
     show_rate_chart: "Sateen voimakkuuden kaavio",
     show_rate_chart_helper: "Tarvitsee voimakkuuden sensorin.",
     rate_chart_hours: "Tunteja voimakkuuden kaaviossa",
-    rate_chart_hours_helper: "Enint\xE4\xE4n 168 eli viikko: tallennin s\xE4ilytt\xE4\xE4 historiaa oletuksena kymmenen p\xE4iv\xE4\xE4."
+    rate_chart_hours_helper: "Enint\xE4\xE4n 168 eli viikko. Tallennin s\xE4ilytt\xE4\xE4 historiaa oletuksena kymmenen p\xE4iv\xE4\xE4."
   },
   intensity: {
     none: "Ei sada",
