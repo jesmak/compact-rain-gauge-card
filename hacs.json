@@ -1,5 +1,6 @@
 {
   "name": "Compact rain gauge card",
   "render_readme": true,
-  "filename": "compact-rain-gauge-card.js"
+  "filename": "compact-rain-gauge-card.js",
+  "homeassistant": "2026.9.3"
 }
