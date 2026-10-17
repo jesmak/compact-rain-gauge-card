@@ -27,7 +27,7 @@
         "hourly_rate_entity": "Rain rate sensor",
         "hourly_rate_entity_helper": "How hard it is raining now. Optional.",
         "max_level": "Full drop",
-        "max_level_helper": "The rain that fills the drop, in the sensor's unit. 40 mm or 1.57 in when left empty.",
+        "max_level_helper": "The rain that fills the drop, in the sensor's unit. 40 mm or 1.57 inches when left empty.",
         "is_imperial": "Inches",
         "is_imperial_helper": "Reads a sensor without a unit as inches. A sensor with a unit says which it is.",
         "fill_drop_colour": "Fill colour",
