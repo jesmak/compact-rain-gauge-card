@@ -42,7 +42,10 @@ export class CompactRainGaugeChart extends LitElement {
             <div
                 class="plot"
                 @pointermove=${this.point}
-                @pointerdown=${this.point}
+                @pointerdown=${(event: PointerEvent) => {
+                    event.stopPropagation();
+                    this.point(event);
+                }}
                 @pointerleave=${() => (this.active = undefined)}
                 @click=${(event: Event) => event.stopPropagation()}
             >

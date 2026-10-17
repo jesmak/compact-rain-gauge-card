@@ -20,14 +20,14 @@ import type { ChartItem } from "./chart";
 import { CARD_VERSION } from "./const";
 import { DROP_HEIGHT, DROP_WIDTH, drop, scaleMarks } from "./drop";
 import "./editor";
-import { fillOf, findRainSensor, formatReading, isInches, maxLevelOf, unitOf, valueOf } from "./gauge";
+import { NO_VALUE, fillOf, findRainSensor, formatReading, isInches, maxLevelOf, unitOf, valueOf } from "./gauge";
 import type { HassEntity, HomeAssistant } from "./hass";
-import { HOUR, LOOKBACK_DAYS, MAX_RATE_CHART_HOURS, fetchDays, fetchRate, isCounter, sumOf } from "./history";
+import { HOUR, LOOKBACK_DAYS, MAX_RATE_CHART_HOURS, WEEK_DAYS, dayFormatter, fetchDays, fetchRate, isCounter, sumOf } from "./history";
 import type { DayAmount, Point } from "./history";
 import { barsOf, intensityOf } from "./intensity";
 import type { Intensity } from "./intensity";
 import { browserLanguage, translate } from "./localize/localize";
-import { option } from "./types";
+import { checkNumbers, option } from "./types";
 import type { CompactRainGaugeCardConfig } from "./types";
 
 console.info(
@@ -122,6 +122,7 @@ export class CompactRainGaugeCard extends LitElement {
               });
     private observed: Element[] = [];
     private timer?: ReturnType<typeof setInterval>;
+    /** When the recorder was last asked, or 0 when it is to be asked again at the next update. */
     private fetchedAt = 0;
     private fetching = false;
 
@@ -139,6 +140,7 @@ export class CompactRainGaugeCard extends LitElement {
         if (!config || typeof config.entity !== "string" || config.entity === "") {
             throw new Error(translate(browserLanguage(), "common.invalid_configuration"));
         }
+        checkNumbers(config);
         this.config = { ...config };
         this.days = undefined;
         this.rates = undefined;
@@ -154,9 +156,14 @@ export class CompactRainGaugeCard extends LitElement {
         return { columns: 6, rows: 2 + this.parts(), min_columns: 3, min_rows: 1 };
     }
 
+    /**
+     * A card taken off the page and put back, as a masonry view does when it moves cards between columns, isn't
+     * rendered again by itself: the update watches its size again, and asks the recorder if the days are old.
+     */
     public connectedCallback(): void {
         super.connectedCallback();
         this.timer = setInterval(() => void this.refresh(), REFRESH_INTERVAL);
+        this.requestUpdate();
     }
 
     public disconnectedCallback(): void {
@@ -189,9 +196,22 @@ export class CompactRainGaugeCard extends LitElement {
             watched.forEach((element) => this.resizer?.observe(element));
             this.observed = watched;
         }
-        if (this.fetchedAt === 0) {
+        if (this.isStale()) {
             void this.refresh();
         }
+    }
+
+    /** Whether the recorder is to be asked again: never asked, asked too long ago, or the day has changed since. */
+    private isStale(): boolean {
+        if (this.fetchedAt === 0 || Date.now() - this.fetchedAt >= REFRESH_INTERVAL) {
+            return true;
+        }
+        const last = this.days?.[this.days.length - 1];
+        return last !== undefined && last.day !== this.today();
+    }
+
+    private today(): string {
+        return dayFormatter(this.hass?.config?.time_zone)(Date.now());
     }
 
     /** Asks the recorder for what the options need, and nothing when they need nothing. */
@@ -214,13 +234,16 @@ export class CompactRainGaugeCard extends LitElement {
                 count > 0 ? quietly(fetchDays(hass, entity, count, now)) : undefined,
                 wantsRates ? quietly(fetchRate(hass, rateId, this.rateHours(), now)) : undefined,
             ]);
-            if (config !== this.config) {
-                return;
+            if (config === this.config) {
+                this.days = days;
+                this.rates = rates;
             }
-            this.days = days;
-            this.rates = rates;
         } finally {
             this.fetching = false;
+        }
+        // The configuration changed while the recorder was being asked, so its answer was for the old one.
+        if (config !== this.config) {
+            void this.refresh();
         }
     }
 
@@ -233,7 +256,7 @@ export class CompactRainGaugeCard extends LitElement {
         const needs = [
             option(config, "show_daily_chart") ? this.chartDays() : 0,
             option(config, "show_month") ? LOOKBACK_DAYS : 0,
-            option(config, "show_week") ? 7 : 0,
+            option(config, "show_week") ? WEEK_DAYS : 0,
             option(config, "show_yesterday") ? 2 : 0,
         ];
         return Math.max(...needs);
@@ -263,8 +286,9 @@ export class CompactRainGaugeCard extends LitElement {
         if (!this.days || this.days.length === 0 || isCounter(entity)) {
             return this.days;
         }
+        // Just after midnight, until the recorder is asked again, the last day on record is yesterday.
         const today = valueOf(entity);
-        if (today === null) {
+        if (today === null || this.days[this.days.length - 1].day !== this.today()) {
             return this.days;
         }
         return [...this.days.slice(0, -1), { ...this.days[this.days.length - 1], amount: today }];
@@ -296,7 +320,7 @@ export class CompactRainGaugeCard extends LitElement {
         const raining = rateValue !== null && rateValue > 0;
         const intensity = intensityOf(rateValue, rateUnit);
         const intensityText = this.text(`intensity.${intensity}`);
-        const showIntensity = rate !== undefined && option(config, "show_intensity");
+        const showIntensity = rateValue !== null && option(config, "show_intensity");
         const tappable = isTappable(config);
 
         return html`
@@ -373,10 +397,10 @@ export class CompactRainGaugeCard extends LitElement {
             wanted.push(["yesterday", days.length >= 2 ? days[days.length - 2].amount : null]);
         }
         if (option(config, "show_week")) {
-            wanted.push(["week", sumOf(days, 7)]);
+            wanted.push(["week", sumOf(days, WEEK_DAYS)]);
         }
         if (option(config, "show_month")) {
-            wanted.push(["month", sumOf(days, 30)]);
+            wanted.push(["month", sumOf(days, LOOKBACK_DAYS)]);
         }
         if (wanted.length === 0) {
             return nothing;
@@ -458,7 +482,7 @@ export class CompactRainGaugeCard extends LitElement {
             .items=${items}
             .start=${start}
             .end=${end}
-            .floor=${isInches(unit.split("/")[0]) ? 0.05 : 1}
+            .floor=${isInches(unit) ? 0.05 : 1}
             .heading=${this.text("common.rate_chart", { hours: String(hours) })}
             .brief=${this.text("common.rate_chart_short", { hours: String(hours) })}
         ></compact-rain-gauge-chart>`;
@@ -536,13 +560,15 @@ export class CompactRainGaugeCard extends LitElement {
             }
 
             /*
-       * As tall as the gauge and as wide as that height calls for. The drawing is laid over the box rather than
-       * in it, so it never makes the gauge taller: the grid, or the figures, decide the height.
-       */
+             * As tall as the gauge and as wide as that height calls for, unless the figures need the room. The
+             * drawing is laid over the box rather than in it, so it never makes the gauge taller: the grid, or the
+             * figures, decide the height.
+             */
             .drop {
-                flex: none;
+                flex: 0 1 auto;
                 position: relative;
                 width: var(--drop-width, 52px);
+                min-width: 24px;
                 max-width: 45%;
                 min-height: 36px;
             }
@@ -608,12 +634,13 @@ export class CompactRainGaugeCard extends LitElement {
                 stroke-linejoin: round;
             }
 
+            /* Never narrower than the figures themselves, which are never cut short: the drop gives way instead. */
             .figures {
+                flex: 1 0 auto;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 gap: 4px;
-                min-width: 0;
             }
 
             .figure {
@@ -630,6 +657,12 @@ export class CompactRainGaugeCard extends LitElement {
                 white-space: nowrap;
             }
 
+            /* A label takes the width the figures have but asks for none, so it is the one cut short. */
+            .figure .label {
+                width: 0;
+                min-width: 100%;
+            }
+
             .label {
                 font-size: 12px;
                 line-height: 16px;
@@ -644,9 +677,9 @@ export class CompactRainGaugeCard extends LitElement {
             }
 
             /*
-       * The bars stand on the text's baseline and reach the top of its digits, whatever the font: an inline
-       * flex box sits on the baseline, and a cap is the height of a capital or a digit.
-       */
+             * The bars stand on the text's baseline and reach the top of its digits, whatever the font: an inline
+             * flex box sits on the baseline, and a cap is the height of a capital or a digit.
+             */
             .intensity {
                 display: inline-flex;
                 align-items: flex-end;
@@ -679,9 +712,9 @@ export class CompactRainGaugeCard extends LitElement {
             }
 
             /*
-       * The parts under the drop are tiles of their own, as the packages are in package-tracker-card: the
-       * totals, and each chart with its heading under it.
-       */
+             * The parts under the drop are tiles of their own, as the packages are in package-tracker-card: the
+             * totals, and each chart with its heading under it.
+             */
             .extras,
             .chart {
                 flex: none;
@@ -721,13 +754,11 @@ export class CompactRainGaugeCard extends LitElement {
                 font-size: 11px;
             }
 
+            /* An amount is never cut short: in a narrow column its unit wraps under the number. */
             .extra .amount {
                 font-size: 13px;
                 font-weight: 500;
                 color: var(--primary-text-color);
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
             }
 
             .chart {
@@ -776,6 +807,11 @@ export class CompactRainGaugeCard extends LitElement {
                 .extra .label {
                     overflow: hidden;
                     text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+                .extra .amount {
+                    flex: none;
+                    white-space: nowrap;
                 }
             }
 
@@ -816,6 +852,7 @@ export class CompactRainGaugeCard extends LitElement {
                     min-height: 44px;
                 }
                 .figures {
+                    flex: none;
                     align-items: center;
                     gap: 0;
                     max-width: 100%;
@@ -856,9 +893,9 @@ export class CompactRainGaugeCard extends LitElement {
             }
 
             /*
-       * Low, such as one row of a sections view: the drop beside the figures whatever the width, and the
-       * figures without labels, the rate under the total.
-       */
+             * Low, such as one row of a sections view: the drop beside the figures whatever the width, and the
+             * figures without labels, the rate under the total.
+             */
             .gauge.short {
                 flex-direction: row;
                 align-items: stretch;
@@ -866,8 +903,9 @@ export class CompactRainGaugeCard extends LitElement {
                 padding: 6px 10px 6px 8px;
             }
             .gauge.short .drop {
-                flex: none;
+                flex: 0 1 auto;
                 width: var(--drop-width, 34px);
+                min-width: 16px;
                 min-height: 0;
             }
             .gauge.short .figures {
@@ -919,12 +957,13 @@ export class CompactRainGaugeCard extends LitElement {
     }
 }
 
-/** An amount in the locale, with its unit, or a dash when it isn't known. */
-function amountText(amount: number | null, unit: string, language: string): string {
+/** An amount in the locale, with its unit, or a dash when it isn't known. Inches get a decimal more than millimetres. */
+export function amountText(amount: number | null, unit: string, language: string): string {
     if (amount === null) {
-        return "—";
+        return NO_VALUE;
     }
-    return `${new Intl.NumberFormat(language, { maximumFractionDigits: 1 }).format(amount)} ${unit}`;
+    const digits = isInches(unit) ? 2 : 1;
+    return `${new Intl.NumberFormat(language, { maximumFractionDigits: digits }).format(amount)} ${unit}`;
 }
 
 declare global {

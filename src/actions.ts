@@ -80,5 +80,6 @@ export class GestureDetector {
     public dispose(): void {
         clearTimeout(this.holdTimer);
         clearTimeout(this.tapTimer);
+        this.tapTimer = undefined;
     }
 }

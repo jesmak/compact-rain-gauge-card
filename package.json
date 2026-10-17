@@ -1,6 +1,6 @@
 {
     "name": "compact-rain-gauge-card",
-    "version": "2.0.1",
+    "version": "2.1.0",
     "description": "Home Assistant dashboard card that shows the day's rain as a filling drop, sized for any grid column",
     "keywords": [
         "home-assistant",

@@ -32,6 +32,10 @@ describe("languages", () => {
         expect(keys(language(code)).filter((key) => !english.has(key))).toEqual([]);
     });
 
+    it("are English and Finnish with the same texts, the two that ship complete", () => {
+        expect(keys(language("fi")).sort()).toEqual(keys(language("en")).sort());
+    });
+
     it("fall back to English for a text a language lacks, and to the key for one nobody has", () => {
         expect(translate("fi", "common.total")).toBe("Kokonaiskertymä");
         expect(translate("xx", "common.total")).toBe("Total");

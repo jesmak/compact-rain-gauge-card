@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { NO_VALUE, fillOf, findRainSensor, formatReading, maxLevelOf, unitOf, valueOf } from "../src/gauge";
+import { NO_VALUE, fillOf, findRainSensor, formatReading, isInches, maxLevelOf, unitOf, valueOf } from "../src/gauge";
 import type { HassEntity, HomeAssistant } from "../src/hass";
+import { checkNumbers } from "../src/types";
 import type { CompactRainGaugeCardConfig } from "../src/types";
 
 const CONFIG: CompactRainGaugeCardConfig = { type: "custom:compact-rain-gauge-card", entity: "sensor.rain" };
@@ -24,6 +25,13 @@ describe("reading a sensor", () => {
         expect(unitOf(sensor("1", {}), { ...CONFIG, is_imperial: true })).toBe("in");
         expect(unitOf(sensor("1", { unit_of_measurement: "mm" }), { ...CONFIG, is_imperial: true })).toBe("mm");
     });
+
+    it("tells inches by the amount, in a rate too", () => {
+        expect(isInches("in")).toBe(true);
+        expect(isInches("in/h")).toBe(true);
+        expect(isInches(" in / h")).toBe(true);
+        expect(isInches("mm/h")).toBe(false);
+    });
 });
 
 describe("the full drop", () => {
@@ -31,7 +39,25 @@ describe("the full drop", () => {
         expect(maxLevelOf(CONFIG, "mm")).toBe(40);
         expect(maxLevelOf(CONFIG, "in")).toBeCloseTo(1.575, 3);
         expect(maxLevelOf({ ...CONFIG, max_level: 10 }, "mm")).toBe(10);
-        expect(maxLevelOf({ ...CONFIG, max_level: 0 }, "mm")).toBe(40);
+    });
+
+    it("refuses a size that isn't a number above zero, rather than quietly using the default", () => {
+        expect(() => checkNumbers(CONFIG)).not.toThrow();
+        expect(() => checkNumbers({ ...CONFIG, max_level: 2.5 })).not.toThrow();
+        for (const level of ["auto", "40", 0, -5, Number.NaN]) {
+            expect(() => checkNumbers({ ...CONFIG, max_level: level as never })).toThrow("full drop threshold");
+        }
+    });
+
+    it("lets the editor pass zero on the way to a fraction, but nothing that isn't a number", () => {
+        expect(() => checkNumbers({ ...CONFIG, max_level: 0 }, true)).not.toThrow();
+        expect(() => checkNumbers({ ...CONFIG, max_level: "auto" as never }, true)).toThrow("full drop threshold");
+    });
+
+    it("refuses chart lengths that aren't numbers, and leaves their range to the card", () => {
+        expect(() => checkNumbers({ ...CONFIG, daily_chart_days: 200, rate_chart_hours: 0 })).not.toThrow();
+        expect(() => checkNumbers({ ...CONFIG, daily_chart_days: "week" as never })).toThrow("Days in the bars");
+        expect(() => checkNumbers({ ...CONFIG, rate_chart_hours: "12" as never })).toThrow("Hours in the rate chart");
     });
 
     it("fills in proportion, stops at full, and stays empty without a reading", () => {

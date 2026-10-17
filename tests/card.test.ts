@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { fitCard } from "../src/compact-rain-gauge-card";
+import { amountText, fitCard } from "../src/compact-rain-gauge-card";
 import type { CompactRainGaugeCard } from "../src/compact-rain-gauge-card";
+import type { CompactRainGaugeCardEditor } from "../src/editor";
 import type { HomeAssistant } from "../src/hass";
 import type { CompactRainGaugeCardConfig } from "../src/types";
 
@@ -179,6 +180,14 @@ describe("the gauge", () => {
         const element = document.createElement("compact-rain-gauge-card") as CompactRainGaugeCard;
         expect(() => element.setConfig({ type: "custom:compact-rain-gauge-card" } as never)).toThrow();
     });
+
+    it("refuses a full drop that isn't a number, as the editor does", () => {
+        const config = { type: "custom:compact-rain-gauge-card", entity: RAIN, max_level: "auto" } as never;
+        const element = document.createElement("compact-rain-gauge-card") as CompactRainGaugeCard;
+        const form = document.createElement("compact-rain-gauge-card-editor") as CompactRainGaugeCardEditor;
+        expect(() => element.setConfig(config)).toThrow();
+        expect(() => form.setConfig(config)).toThrow();
+    });
 });
 
 describe("the size of the card", () => {
@@ -331,7 +340,72 @@ describe("what the recorder adds", () => {
             (node) => `${node.querySelector(".long")?.textContent} ${node.querySelector(".amount")?.textContent}`,
         );
         // Today is 10 from the sensor; the rest are 1 but for 20 three days ago.
-        expect(extras).toEqual(["Yesterday 1 mm", "Past week 35 mm", "Past month 58 mm"]);
+        expect(extras).toEqual(["Yesterday 1 mm", "Past 7 days 35 mm", "Past 30 days 58 mm"]);
+    });
+
+    it("asks again after midnight rather than put today's rain on yesterday", async () => {
+        vi.useFakeTimers({ toFake: ["Date"] });
+        try {
+            const calls: Array<Record<string, unknown>> = [];
+            const yesterday = (element: CompactRainGaugeCard) => root(element).querySelector(".extra .amount")?.textContent;
+            vi.setSystemTime(new Date(2026, 9, 14, 23, 50));
+            const element = await card(hass("12", "0", "en", { days: [12, 3], calls }), { show_yesterday: true });
+            await settled(element);
+            expect(yesterday(element)).toBe("3 mm");
+            vi.setSystemTime(new Date(2026, 9, 15, 0, 10));
+            element.hass = hass("0", "0", "en", { days: [0, 12], calls });
+            await settled(element);
+            expect(yesterday(element)).toBe("12 mm");
+            expect(calls).toHaveLength(2);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    it("asks again when it comes back to the page after a while", async () => {
+        vi.useFakeTimers({ toFake: ["Date"] });
+        try {
+            const calls: Array<Record<string, unknown>> = [];
+            vi.setSystemTime(new Date(2026, 9, 14, 12, 0));
+            const element = await card(hass("12", "0", "en", { days: [12, 3], calls }), { show_yesterday: true });
+            await settled(element);
+            element.remove();
+            vi.setSystemTime(new Date(2026, 9, 14, 12, 20));
+            document.body.append(element);
+            await settled(element);
+            expect(calls).toHaveLength(2);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    it("asks again for a configuration changed while it was asking", async () => {
+        const calls: Array<Record<string, unknown>> = [];
+        const element = await card(hass("10", "0", "en", { days: [10, 4], calls }), { show_daily_chart: true });
+        element.setConfig({ type: "custom:compact-rain-gauge-card", entity: RAIN, show_daily_chart: true, show_yesterday: true });
+        await settled(element);
+        await settled(element);
+        expect(calls).toHaveLength(2);
+        expect(root(element).querySelector(".extra .amount")?.textContent).toBe("4 mm");
+    });
+
+    it("doesn't take a press on a chart for holding the card", async () => {
+        const element = await card(hass("10", "0", "en", { days: [10, 4] }), {
+            show_daily_chart: true,
+            hold_action: { action: "more-info" },
+        });
+        await settled(element);
+        const actions: string[] = [];
+        element.addEventListener("hass-action", (event) => actions.push((event as CustomEvent<{ action: string }>).detail.action));
+        const plot = root(element).querySelector(".daily-chart")?.shadowRoot?.querySelector(".plot");
+        vi.useFakeTimers();
+        try {
+            plot?.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, composed: true, clientX: 10 }));
+            vi.advanceTimersByTime(600);
+            expect(actions).toEqual([]);
+        } finally {
+            vi.useRealTimers();
+        }
     });
 
     it("asks the recorder nothing when no option needs it", async () => {
@@ -400,6 +474,21 @@ describe("the drop", () => {
         const plain = await card(hass("10", "5"), { hourly_rate_entity: RATE, show_intensity: false });
         expect(root(plain).querySelector(".intensity")).toBeNull();
     });
+
+    it("says nothing of how hard it rains while the rate is unavailable", async () => {
+        const element = await card(hass("10", "unavailable"), { hourly_rate_entity: RATE });
+        expect(root(element).querySelector(".intensity")).toBeNull();
+        expect(root(element).querySelector("ha-card")?.getAttribute("aria-label")).not.toContain("Not raining");
+    });
+});
+
+describe("the amounts of recent days", () => {
+    it("have a decimal in millimetres and two in inches, and a dash when unknown", () => {
+        expect(amountText(2.46, "mm", "en")).toBe("2.5 mm");
+        expect(amountText(0.04, "in", "en")).toBe("0.04 in");
+        expect(amountText(0.43, "in/h", "en")).toBe("0.43 in/h");
+        expect(amountText(null, "mm", "en")).toBe("—");
+    });
 });
 
 describe("the narrowest card", () => {
@@ -414,7 +503,7 @@ describe("the narrowest card", () => {
         });
         await settled(element);
         const names = (selector: string) => [...root(element).querySelectorAll(`.extra ${selector}`)].map((node) => node.textContent);
-        expect(names(".long")).toEqual(["Eilen", "Edellinen vko", "Edellinen kk"]);
+        expect(names(".long")).toEqual(["Eilen", "7 päivää", "30 päivää"]);
         expect(names(".brief")).toEqual(["1 pv", "7 pv", "30 pv"]);
         const daily = root(element).querySelector(".daily-chart") as HTMLElement & { brief: string };
         const rate = root(element).querySelector(".rate-chart") as HTMLElement & { brief: string };

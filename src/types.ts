@@ -1,4 +1,5 @@
 import type { ActionConfig, LovelaceCardConfig } from "./hass";
+import { browserLanguage, translate } from "./localize/localize";
 
 export interface CompactRainGaugeCardConfig extends LovelaceCardConfig {
     /** The rain so far, usually today's: the drop fills with it. */
@@ -48,7 +49,27 @@ export const DEFAULTS = {
     daily_chart_days: 14,
     show_rate_chart: false,
     rate_chart_hours: 24,
+    is_imperial: false,
 } as const;
+
+/**
+ * Refuses a number option that isn't a number, so that a mistyped one can't quietly mean the default. `max_level`
+ * must also be above zero, except in the editor, since typing 0.5 passes through zero. The charts' lengths are kept
+ * in their range by the card.
+ */
+export function checkNumbers(config: CompactRainGaugeCardConfig, editing = false): void {
+    const isNumber = (value: unknown): value is number => typeof value === "number" && Number.isFinite(value);
+    const level: unknown = config.max_level;
+    if (level != null && !(isNumber(level) && (editing || level > 0))) {
+        throw new Error(translate(browserLanguage(), "common.invalid_max_level"));
+    }
+    for (const key of ["daily_chart_days", "rate_chart_hours"] as const) {
+        const value: unknown = config[key];
+        if (value != null && !isNumber(value)) {
+            throw new Error(translate(browserLanguage(), `common.invalid_${key}`));
+        }
+    }
+}
 
 /** An option's value, or its default. */
 export function option<K extends keyof typeof DEFAULTS>(

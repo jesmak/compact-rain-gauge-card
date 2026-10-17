@@ -33,7 +33,8 @@ export interface Point {
 
 export const HOUR = 3_600_000;
 export const DAY = 24 * HOUR;
-/** The longest the totals look back: the past month. */
+/** How far the totals look back: the past week, and the past month, the longest. */
+export const WEEK_DAYS = 7;
 export const LOOKBACK_DAYS = 30;
 /** The rate chart reads the state history, which the recorder keeps for ten days by default. */
 export const MAX_RATE_CHART_HOURS = 168;

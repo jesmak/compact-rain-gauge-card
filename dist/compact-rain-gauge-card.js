@@ -1,4 +1,4 @@
-/*! compact-rain-gauge-card 2.0.1 | MIT License */
+/*! compact-rain-gauge-card 2.1.0 | MIT License */
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __decorateClass = (decorators, target, key, kind) => {
@@ -10,7 +10,7 @@ var __decorateClass = (decorators, target, key, kind) => {
   return result;
 };
 
-// ../../../../../../home/jesmak/Koodi/hass-kortit/compact-rain-gauge-card/node_modules/@lit/reactive-element/css-tag.js
+// node_modules/@lit/reactive-element/css-tag.js
 var t = globalThis;
 var e = t.ShadowRoot && (void 0 === t.ShadyCSS || t.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype;
 var s = /* @__PURE__ */ Symbol();
@@ -55,7 +55,7 @@ var c = e ? (t4) => t4 : (t4) => t4 instanceof CSSStyleSheet ? ((t5) => {
   return r(e5);
 })(t4) : t4;
 
-// ../../../../../../home/jesmak/Koodi/hass-kortit/compact-rain-gauge-card/node_modules/@lit/reactive-element/reactive-element.js
+// node_modules/@lit/reactive-element/reactive-element.js
 var { is: i2, defineProperty: e2, getOwnPropertyDescriptor: h, getOwnPropertyNames: r2, getOwnPropertySymbols: o2, getPrototypeOf: n2 } = Object;
 var a = globalThis;
 var c2 = a.trustedTypes;
@@ -277,7 +277,7 @@ var y = class extends HTMLElement {
 };
 y.elementStyles = [], y.shadowRootOptions = { mode: "open" }, y[d("elementProperties")] = /* @__PURE__ */ new Map(), y[d("finalized")] = /* @__PURE__ */ new Map(), p?.({ ReactiveElement: y }), (a.reactiveElementVersions ?? (a.reactiveElementVersions = [])).push("2.1.2");
 
-// ../../../../../../home/jesmak/Koodi/hass-kortit/compact-rain-gauge-card/node_modules/lit-html/lit-html.js
+// node_modules/lit-html/lit-html.js
 var t2 = globalThis;
 var i3 = (t4) => t4;
 var s2 = t2.trustedTypes;
@@ -531,7 +531,7 @@ var D = (t4, i5, s4) => {
   return h3._$AI(t4), h3;
 };
 
-// ../../../../../../home/jesmak/Koodi/hass-kortit/compact-rain-gauge-card/node_modules/lit-element/lit-element.js
+// node_modules/lit-element/lit-element.js
 var s3 = globalThis;
 var i4 = class extends y {
   constructor() {
@@ -561,14 +561,14 @@ var o4 = s3.litElementPolyfillSupport;
 o4?.({ LitElement: i4 });
 (s3.litElementVersions ?? (s3.litElementVersions = [])).push("4.2.2");
 
-// ../../../../../../home/jesmak/Koodi/hass-kortit/compact-rain-gauge-card/node_modules/@lit/reactive-element/decorators/custom-element.js
+// node_modules/@lit/reactive-element/decorators/custom-element.js
 var t3 = (t4) => (e5, o6) => {
   void 0 !== o6 ? o6.addInitializer(() => {
     customElements.define(t4, e5);
   }) : customElements.define(t4, e5);
 };
 
-// ../../../../../../home/jesmak/Koodi/hass-kortit/compact-rain-gauge-card/node_modules/@lit/reactive-element/decorators/property.js
+// node_modules/@lit/reactive-element/decorators/property.js
 var o5 = { attribute: true, type: String, converter: u, reflect: false, hasChanged: f };
 var r4 = (t4 = o5, e5, r6) => {
   const { kind: n5, metadata: i5 } = r6;
@@ -598,7 +598,7 @@ function n4(t4) {
   })(t4, e5, o6);
 }
 
-// ../../../../../../home/jesmak/Koodi/hass-kortit/compact-rain-gauge-card/node_modules/@lit/reactive-element/decorators/state.js
+// node_modules/@lit/reactive-element/decorators/state.js
 function r5(r6) {
   return n4({ ...r6, state: true, attribute: false });
 }
@@ -660,6 +660,7 @@ var GestureDetector = class {
   dispose() {
     clearTimeout(this.holdTimer);
     clearTimeout(this.tapTimer);
+    this.tapTimer = void 0;
   }
 };
 
@@ -687,7 +688,10 @@ var CompactRainGaugeChart = class extends i4 {
             <div
                 class="plot"
                 @pointermove=${this.point}
-                @pointerdown=${this.point}
+                @pointerdown=${(event) => {
+      event.stopPropagation();
+      this.point(event);
+    }}
                 @pointerleave=${() => this.active = void 0}
                 @click=${(event) => event.stopPropagation()}
             >
@@ -884,7 +888,7 @@ function indexAt(kind, items, share, start, end) {
 }
 
 // src/const.ts
-var CARD_VERSION = "2.0.1";
+var CARD_VERSION = "2.1.0";
 var DEFAULT_MAX_LEVEL_MM = 40;
 var MM_PER_INCH = 25.4;
 
@@ -949,6 +953,7 @@ function drop({ fill, clipId, raining, marks }) {
 // src/history.ts
 var HOUR = 36e5;
 var DAY = 24 * HOUR;
+var WEEK_DAYS = 7;
 var LOOKBACK_DAYS = 30;
 var MAX_RATE_CHART_HOURS = 168;
 function dayFormatter(timeZone) {
@@ -1064,12 +1069,15 @@ var en_default = {
     name: "Compact rain gauge",
     description: "The day's rain as a filling drop, with how hard it is raining now",
     invalid_configuration: "Choose a rain sensor for the card",
+    invalid_max_level: "The full drop threshold must be a number greater than zero",
+    invalid_rate_chart_hours: "Hours in the rate chart must be a number",
+    invalid_daily_chart_days: "Days in the bars must be a number",
     no_entity: "Sensor not found:",
     total: "Total",
     rate: "Rate",
     yesterday: "Yesterday",
-    week: "Past week",
-    month: "Past month",
+    week: "Past 7 days",
+    month: "Past 30 days",
     daily_chart: "Rain, last {days} days",
     rate_chart: "Rain rate, last {hours} h",
     yesterday_short: "1 d",
@@ -1085,7 +1093,9 @@ var en_default = {
     hourly_rate_entity: "Rain rate sensor",
     hourly_rate_entity_helper: "How hard it is raining now. Optional.",
     max_level: "Full drop",
-    max_level_helper: "The rain that fills the drop, in the sensor's unit. 40 mm when left empty.",
+    max_level_helper: "The rain that fills the drop, in the sensor's unit. 40 mm or 1.57 in when left empty.",
+    is_imperial: "Inches",
+    is_imperial_helper: "Reads a sensor without a unit as inches. A sensor with a unit says which it is.",
     fill_drop_colour: "Fill colour",
     border_colour: "Outline colour",
     language: "Language",
@@ -1126,12 +1136,15 @@ var fi_default = {
     name: "Kompakti sademittari",
     description: "P\xE4iv\xE4n sadem\xE4\xE4r\xE4 t\xE4yttyv\xE4n\xE4 pisarana ja sateen voimakkuus juuri nyt",
     invalid_configuration: "Valitse kortille sadem\xE4\xE4r\xE4n sensori",
+    invalid_max_level: "T\xE4yden pisaran raja-arvon on oltava nollaa suurempi luku",
+    invalid_rate_chart_hours: "Voimakkuuden kaavion tuntim\xE4\xE4r\xE4n on oltava luku",
+    invalid_daily_chart_days: "Pylv\xE4iden p\xE4ivien m\xE4\xE4r\xE4n on oltava luku",
     no_entity: "Sensoria ei l\xF6ydy:",
     total: "Kokonaiskertym\xE4",
     rate: "Sadem\xE4\xE4r\xE4",
     yesterday: "Eilen",
-    week: "Edellinen vko",
-    month: "Edellinen kk",
+    week: "7 p\xE4iv\xE4\xE4",
+    month: "30 p\xE4iv\xE4\xE4",
     daily_chart: "Sadem\xE4\xE4r\xE4, {days} pv",
     rate_chart: "Sateen voimakkuus, {hours} h",
     yesterday_short: "1 pv",
@@ -1147,7 +1160,9 @@ var fi_default = {
     hourly_rate_entity: "Sateen voimakkuuden sensori",
     hourly_rate_entity_helper: "Kuinka kovaa sataa juuri nyt. Vapaaehtoinen.",
     max_level: "T\xE4ysi pisara",
-    max_level_helper: "Sadem\xE4\xE4r\xE4, joka t\xE4ytt\xE4\xE4 pisaran, sensorin yksik\xF6ss\xE4. Tyhj\xE4n\xE4 40 mm.",
+    max_level_helper: "Sadem\xE4\xE4r\xE4, joka t\xE4ytt\xE4\xE4 pisaran, sensorin yksik\xF6ss\xE4. Tyhj\xE4n\xE4 40 mm tai 1,57 in.",
+    is_imperial: "Tuumat",
+    is_imperial_helper: "Lukee yksik\xF6tt\xF6m\xE4n sensorin arvon tuumina. Sensori, jolla on yksikk\xF6, kertoo sen itse.",
     fill_drop_colour: "T\xE4yt\xF6n v\xE4ri",
     border_colour: "Reunan v\xE4ri",
     language: "Kieli",
@@ -1217,8 +1232,22 @@ var DEFAULTS = {
   show_daily_chart: false,
   daily_chart_days: 14,
   show_rate_chart: false,
-  rate_chart_hours: 24
+  rate_chart_hours: 24,
+  is_imperial: false
 };
+function checkNumbers(config, editing = false) {
+  const isNumber = (value) => typeof value === "number" && Number.isFinite(value);
+  const level = config.max_level;
+  if (level != null && !(isNumber(level) && (editing || level > 0))) {
+    throw new Error(translate(browserLanguage(), "common.invalid_max_level"));
+  }
+  for (const key of ["daily_chart_days", "rate_chart_hours"]) {
+    const value = config[key];
+    if (value != null && !isNumber(value)) {
+      throw new Error(translate(browserLanguage(), `common.invalid_${key}`));
+    }
+  }
+}
 function option(config, key) {
   const value = config[key];
   return value ?? DEFAULTS[key];
@@ -1263,6 +1292,7 @@ function schema(viewer) {
       flatten: true,
       schema: [
         { name: "max_level", selector: { number: { min: 0, step: "any", mode: "box" } } },
+        toggle("is_imperial"),
         {
           type: "grid",
           name: "",
@@ -1343,7 +1373,9 @@ var CompactRainGaugeCardEditor = class extends i4 {
       entity: ""
     };
   }
+  /** A number option the form can't show sends Home Assistant to the YAML editor instead. */
   setConfig(config) {
+    checkNumbers(config, true);
     this.config = { ...config };
   }
   render() {
@@ -1406,14 +1438,10 @@ function unitOf(entity, config) {
   return config.is_imperial ? "in" : "mm";
 }
 function isInches(unit) {
-  return ["in", "inch", "inches", "\u2033", '"'].includes(unit.toLowerCase());
+  return ["in", "inch", "inches", "\u2033", '"'].includes(unit.split("/")[0].trim().toLowerCase());
 }
 function maxLevelOf(config, unit) {
-  const configured = Number(config.max_level);
-  if (Number.isFinite(configured) && configured > 0) {
-    return configured;
-  }
-  return isInches(unit) ? DEFAULT_MAX_LEVEL_MM / MM_PER_INCH : DEFAULT_MAX_LEVEL_MM;
+  return config.max_level ?? (isInches(unit) ? DEFAULT_MAX_LEVEL_MM / MM_PER_INCH : DEFAULT_MAX_LEVEL_MM);
 }
 function fillOf(value, maxLevel) {
   if (value === null || value <= 0 || maxLevel <= 0) {
@@ -1434,7 +1462,7 @@ function findRainSensor(hass) {
   const sensors = Object.values(hass?.states ?? {}).filter(
     (entity) => !!entity && entity.entity_id.startsWith("sensor.") && entity.attributes.device_class === "precipitation"
   );
-  const daily = sensors.find((entity) => /daily|day|today|vuorokau|päivä/i.test(entity.entity_id));
+  const daily = sensors.find((entity) => /daily|day|vuorokau|paiva/i.test(entity.entity_id));
   return (daily ?? sensors[0])?.entity_id;
 }
 
@@ -1449,9 +1477,8 @@ function intensityOf(rate, unit) {
   if (rate === null || rate <= 0) {
     return "none";
   }
-  const amountUnit = unit.split("/")[0].trim();
   const perHour = /\/\s*(min|minute)/i.test(unit) ? rate * 60 : /\/\s*(d|day)/i.test(unit) ? rate / 24 : rate;
-  const mm = isInches(amountUnit) ? perHour * MM_PER_INCH : perHour;
+  const mm = isInches(unit) ? perHour * MM_PER_INCH : perHour;
   return STEPS.find(([floor]) => mm > floor)?.[1] ?? "light";
 }
 function barsOf(intensity) {
@@ -1518,6 +1545,7 @@ var CompactRainGaugeCard = class extends i4 {
       }
     });
     this.observed = [];
+    /** When the recorder was last asked, or 0 when it is to be asked again at the next update. */
     this.fetchedAt = 0;
     this.fetching = false;
   }
@@ -1533,6 +1561,7 @@ var CompactRainGaugeCard = class extends i4 {
     if (!config || typeof config.entity !== "string" || config.entity === "") {
       throw new Error(translate(browserLanguage(), "common.invalid_configuration"));
     }
+    checkNumbers(config);
     this.config = { ...config };
     this.days = void 0;
     this.rates = void 0;
@@ -1545,9 +1574,14 @@ var CompactRainGaugeCard = class extends i4 {
   getGridOptions() {
     return { columns: 6, rows: 2 + this.parts(), min_columns: 3, min_rows: 1 };
   }
+  /**
+   * A card taken off the page and put back, as a masonry view does when it moves cards between columns, isn't
+   * rendered again by itself: the update watches its size again, and asks the recorder if the days are old.
+   */
   connectedCallback() {
     super.connectedCallback();
     this.timer = setInterval(() => void this.refresh(), REFRESH_INTERVAL);
+    this.requestUpdate();
   }
   disconnectedCallback() {
     super.disconnectedCallback();
@@ -1577,9 +1611,20 @@ var CompactRainGaugeCard = class extends i4 {
       watched.forEach((element) => this.resizer?.observe(element));
       this.observed = watched;
     }
-    if (this.fetchedAt === 0) {
+    if (this.isStale()) {
       void this.refresh();
     }
+  }
+  /** Whether the recorder is to be asked again: never asked, asked too long ago, or the day has changed since. */
+  isStale() {
+    if (this.fetchedAt === 0 || Date.now() - this.fetchedAt >= REFRESH_INTERVAL) {
+      return true;
+    }
+    const last = this.days?.[this.days.length - 1];
+    return last !== void 0 && last.day !== this.today();
+  }
+  today() {
+    return dayFormatter(this.hass?.config?.time_zone)(Date.now());
   }
   /** Asks the recorder for what the options need, and nothing when they need nothing. */
   async refresh() {
@@ -1601,13 +1646,15 @@ var CompactRainGaugeCard = class extends i4 {
         count > 0 ? quietly(fetchDays(hass, entity, count, now)) : void 0,
         wantsRates ? quietly(fetchRate(hass, rateId, this.rateHours(), now)) : void 0
       ]);
-      if (config !== this.config) {
-        return;
+      if (config === this.config) {
+        this.days = days;
+        this.rates = rates;
       }
-      this.days = days;
-      this.rates = rates;
     } finally {
       this.fetching = false;
+    }
+    if (config !== this.config) {
+      void this.refresh();
     }
   }
   /** How many days of rain the options need. */
@@ -1619,7 +1666,7 @@ var CompactRainGaugeCard = class extends i4 {
     const needs = [
       option(config, "show_daily_chart") ? this.chartDays() : 0,
       option(config, "show_month") ? LOOKBACK_DAYS : 0,
-      option(config, "show_week") ? 7 : 0,
+      option(config, "show_week") ? WEEK_DAYS : 0,
       option(config, "show_yesterday") ? 2 : 0
     ];
     return Math.max(...needs);
@@ -1646,7 +1693,7 @@ var CompactRainGaugeCard = class extends i4 {
       return this.days;
     }
     const today = valueOf(entity);
-    if (today === null) {
+    if (today === null || this.days[this.days.length - 1].day !== this.today()) {
       return this.days;
     }
     return [...this.days.slice(0, -1), { ...this.days[this.days.length - 1], amount: today }];
@@ -1675,7 +1722,7 @@ var CompactRainGaugeCard = class extends i4 {
     const raining = rateValue !== null && rateValue > 0;
     const intensity = intensityOf(rateValue, rateUnit);
     const intensityText = this.text(`intensity.${intensity}`);
-    const showIntensity = rate !== void 0 && option(config, "show_intensity");
+    const showIntensity = rateValue !== null && option(config, "show_intensity");
     const tappable = isTappable(config);
     return b2`
             <ha-card
@@ -1742,10 +1789,10 @@ var CompactRainGaugeCard = class extends i4 {
       wanted.push(["yesterday", days.length >= 2 ? days[days.length - 2].amount : null]);
     }
     if (option(config, "show_week")) {
-      wanted.push(["week", sumOf(days, 7)]);
+      wanted.push(["week", sumOf(days, WEEK_DAYS)]);
     }
     if (option(config, "show_month")) {
-      wanted.push(["month", sumOf(days, 30)]);
+      wanted.push(["month", sumOf(days, LOOKBACK_DAYS)]);
     }
     if (wanted.length === 0) {
       return A;
@@ -1820,7 +1867,7 @@ var CompactRainGaugeCard = class extends i4 {
             .items=${items}
             .start=${start}
             .end=${end}
-            .floor=${isInches(unit.split("/")[0]) ? 0.05 : 1}
+            .floor=${isInches(unit) ? 0.05 : 1}
             .heading=${this.text("common.rate_chart", { hours: String(hours) })}
             .brief=${this.text("common.rate_chart_short", { hours: String(hours) })}
         ></compact-rain-gauge-chart>`;
@@ -1893,13 +1940,15 @@ var CompactRainGaugeCard = class extends i4 {
             }
 
             /*
-       * As tall as the gauge and as wide as that height calls for. The drawing is laid over the box rather than
-       * in it, so it never makes the gauge taller: the grid, or the figures, decide the height.
-       */
+             * As tall as the gauge and as wide as that height calls for, unless the figures need the room. The
+             * drawing is laid over the box rather than in it, so it never makes the gauge taller: the grid, or the
+             * figures, decide the height.
+             */
             .drop {
-                flex: none;
+                flex: 0 1 auto;
                 position: relative;
                 width: var(--drop-width, 52px);
+                min-width: 24px;
                 max-width: 45%;
                 min-height: 36px;
             }
@@ -1965,12 +2014,13 @@ var CompactRainGaugeCard = class extends i4 {
                 stroke-linejoin: round;
             }
 
+            /* Never narrower than the figures themselves, which are never cut short: the drop gives way instead. */
             .figures {
+                flex: 1 0 auto;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 gap: 4px;
-                min-width: 0;
             }
 
             .figure {
@@ -1987,6 +2037,12 @@ var CompactRainGaugeCard = class extends i4 {
                 white-space: nowrap;
             }
 
+            /* A label takes the width the figures have but asks for none, so it is the one cut short. */
+            .figure .label {
+                width: 0;
+                min-width: 100%;
+            }
+
             .label {
                 font-size: 12px;
                 line-height: 16px;
@@ -2001,9 +2057,9 @@ var CompactRainGaugeCard = class extends i4 {
             }
 
             /*
-       * The bars stand on the text's baseline and reach the top of its digits, whatever the font: an inline
-       * flex box sits on the baseline, and a cap is the height of a capital or a digit.
-       */
+             * The bars stand on the text's baseline and reach the top of its digits, whatever the font: an inline
+             * flex box sits on the baseline, and a cap is the height of a capital or a digit.
+             */
             .intensity {
                 display: inline-flex;
                 align-items: flex-end;
@@ -2036,9 +2092,9 @@ var CompactRainGaugeCard = class extends i4 {
             }
 
             /*
-       * The parts under the drop are tiles of their own, as the packages are in package-tracker-card: the
-       * totals, and each chart with its heading under it.
-       */
+             * The parts under the drop are tiles of their own, as the packages are in package-tracker-card: the
+             * totals, and each chart with its heading under it.
+             */
             .extras,
             .chart {
                 flex: none;
@@ -2078,13 +2134,11 @@ var CompactRainGaugeCard = class extends i4 {
                 font-size: 11px;
             }
 
+            /* An amount is never cut short: in a narrow column its unit wraps under the number. */
             .extra .amount {
                 font-size: 13px;
                 font-weight: 500;
                 color: var(--primary-text-color);
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
             }
 
             .chart {
@@ -2133,6 +2187,11 @@ var CompactRainGaugeCard = class extends i4 {
                 .extra .label {
                     overflow: hidden;
                     text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+                .extra .amount {
+                    flex: none;
+                    white-space: nowrap;
                 }
             }
 
@@ -2173,6 +2232,7 @@ var CompactRainGaugeCard = class extends i4 {
                     min-height: 44px;
                 }
                 .figures {
+                    flex: none;
                     align-items: center;
                     gap: 0;
                     max-width: 100%;
@@ -2213,9 +2273,9 @@ var CompactRainGaugeCard = class extends i4 {
             }
 
             /*
-       * Low, such as one row of a sections view: the drop beside the figures whatever the width, and the
-       * figures without labels, the rate under the total.
-       */
+             * Low, such as one row of a sections view: the drop beside the figures whatever the width, and the
+             * figures without labels, the rate under the total.
+             */
             .gauge.short {
                 flex-direction: row;
                 align-items: stretch;
@@ -2223,8 +2283,9 @@ var CompactRainGaugeCard = class extends i4 {
                 padding: 6px 10px 6px 8px;
             }
             .gauge.short .drop {
-                flex: none;
+                flex: 0 1 auto;
                 width: var(--drop-width, 34px);
+                min-width: 16px;
                 min-height: 0;
             }
             .gauge.short .figures {
@@ -2292,12 +2353,14 @@ CompactRainGaugeCard = __decorateClass([
 ], CompactRainGaugeCard);
 function amountText(amount, unit, language) {
   if (amount === null) {
-    return "\u2014";
+    return NO_VALUE;
   }
-  return `${new Intl.NumberFormat(language, { maximumFractionDigits: 1 }).format(amount)} ${unit}`;
+  const digits = isInches(unit) ? 2 : 1;
+  return `${new Intl.NumberFormat(language, { maximumFractionDigits: digits }).format(amount)} ${unit}`;
 }
 export {
   CompactRainGaugeCard,
   REFRESH_INTERVAL,
+  amountText,
   fitCard
 };

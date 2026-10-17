@@ -48,6 +48,7 @@ describe("the editor", () => {
             "hourly_rate_entity",
             "language",
             "max_level",
+            "is_imperial",
             "animate_rain",
             "show_scale",
             "show_intensity",

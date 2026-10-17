@@ -22,9 +22,8 @@ export function intensityOf(rate: number | null, unit: string): Intensity {
     if (rate === null || rate <= 0) {
         return "none";
     }
-    const amountUnit = unit.split("/")[0].trim();
     const perHour = /\/\s*(min|minute)/i.test(unit) ? rate * 60 : /\/\s*(d|day)/i.test(unit) ? rate / 24 : rate;
-    const mm = isInches(amountUnit) ? perHour * MM_PER_INCH : perHour;
+    const mm = isInches(unit) ? perHour * MM_PER_INCH : perHour;
     return STEPS.find(([floor]) => mm > floor)?.[1] ?? "light";
 }
 

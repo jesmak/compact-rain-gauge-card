@@ -24,17 +24,14 @@ export function unitOf(entity: HassEntity | undefined, config: CompactRainGaugeC
     return config.is_imperial ? "in" : "mm";
 }
 
+/** Whether an amount, or the amount part of a rate such as "in/h", is in inches. */
 export function isInches(unit: string): boolean {
-    return ["in", "inch", "inches", "″", '"'].includes(unit.toLowerCase());
+    return ["in", "inch", "inches", "″", '"'].includes(unit.split("/")[0].trim().toLowerCase());
 }
 
 /** The rain that fills the drop, in the sensor's unit. */
 export function maxLevelOf(config: CompactRainGaugeCardConfig, unit: string): number {
-    const configured = Number(config.max_level);
-    if (Number.isFinite(configured) && configured > 0) {
-        return configured;
-    }
-    return isInches(unit) ? DEFAULT_MAX_LEVEL_MM / MM_PER_INCH : DEFAULT_MAX_LEVEL_MM;
+    return config.max_level ?? (isInches(unit) ? DEFAULT_MAX_LEVEL_MM / MM_PER_INCH : DEFAULT_MAX_LEVEL_MM);
 }
 
 /** How full the drop is, from 0 to 1. More rain than the maximum fills it, and no reading leaves it empty. */
@@ -74,6 +71,6 @@ export function findRainSensor(hass: HomeAssistant | undefined): string | undefi
         (entity): entity is HassEntity =>
             !!entity && entity.entity_id.startsWith("sensor.") && entity.attributes.device_class === "precipitation",
     );
-    const daily = sensors.find((entity) => /daily|day|today|vuorokau|päivä/i.test(entity.entity_id));
+    const daily = sensors.find((entity) => /daily|day|vuorokau|paiva/i.test(entity.entity_id));
     return (daily ?? sensors[0])?.entity_id;
 }

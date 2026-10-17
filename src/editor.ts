@@ -9,7 +9,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import type { HomeAssistant } from "./hass";
 import { MAX_RATE_CHART_HOURS } from "./history";
 import { LANGUAGE_CODES, browserLanguage, translate } from "./localize/localize";
-import { DEFAULTS } from "./types";
+import { DEFAULTS, checkNumbers } from "./types";
 import type { CompactRainGaugeCardConfig } from "./types";
 
 interface SchemaEntry {
@@ -60,6 +60,7 @@ export function schema(viewer: string) {
             flatten: true,
             schema: [
                 { name: "max_level", selector: { number: { min: 0, step: "any", mode: "box" } } },
+                toggle("is_imperial"),
                 {
                     type: "grid",
                     name: "",
@@ -145,7 +146,9 @@ export class CompactRainGaugeCardEditor extends LitElement {
         entity: "",
     };
 
+    /** A number option the form can't show sends Home Assistant to the YAML editor instead. */
     public setConfig(config: CompactRainGaugeCardConfig): void {
+        checkNumbers(config, true);
         this.config = { ...config };
     }
 
