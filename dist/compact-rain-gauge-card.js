@@ -10,7 +10,7 @@ var __decorateClass = (decorators, target, key, kind) => {
   return result;
 };
 
-// node_modules/@lit/reactive-element/css-tag.js
+// ../../../../../../home/jesmak/Koodi/hass-kortit/compact-rain-gauge-card/node_modules/@lit/reactive-element/css-tag.js
 var t = globalThis;
 var e = t.ShadowRoot && (void 0 === t.ShadyCSS || t.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype;
 var s = /* @__PURE__ */ Symbol();
@@ -55,7 +55,7 @@ var c = e ? (t4) => t4 : (t4) => t4 instanceof CSSStyleSheet ? ((t5) => {
   return r(e5);
 })(t4) : t4;
 
-// node_modules/@lit/reactive-element/reactive-element.js
+// ../../../../../../home/jesmak/Koodi/hass-kortit/compact-rain-gauge-card/node_modules/@lit/reactive-element/reactive-element.js
 var { is: i2, defineProperty: e2, getOwnPropertyDescriptor: h, getOwnPropertyNames: r2, getOwnPropertySymbols: o2, getPrototypeOf: n2 } = Object;
 var a = globalThis;
 var c2 = a.trustedTypes;
@@ -277,7 +277,7 @@ var y = class extends HTMLElement {
 };
 y.elementStyles = [], y.shadowRootOptions = { mode: "open" }, y[d("elementProperties")] = /* @__PURE__ */ new Map(), y[d("finalized")] = /* @__PURE__ */ new Map(), p?.({ ReactiveElement: y }), (a.reactiveElementVersions ?? (a.reactiveElementVersions = [])).push("2.1.2");
 
-// node_modules/lit-html/lit-html.js
+// ../../../../../../home/jesmak/Koodi/hass-kortit/compact-rain-gauge-card/node_modules/lit-html/lit-html.js
 var t2 = globalThis;
 var i3 = (t4) => t4;
 var s2 = t2.trustedTypes;
@@ -531,7 +531,7 @@ var D = (t4, i5, s4) => {
   return h3._$AI(t4), h3;
 };
 
-// node_modules/lit-element/lit-element.js
+// ../../../../../../home/jesmak/Koodi/hass-kortit/compact-rain-gauge-card/node_modules/lit-element/lit-element.js
 var s3 = globalThis;
 var i4 = class extends y {
   constructor() {
@@ -561,14 +561,14 @@ var o4 = s3.litElementPolyfillSupport;
 o4?.({ LitElement: i4 });
 (s3.litElementVersions ?? (s3.litElementVersions = [])).push("4.2.2");
 
-// node_modules/@lit/reactive-element/decorators/custom-element.js
+// ../../../../../../home/jesmak/Koodi/hass-kortit/compact-rain-gauge-card/node_modules/@lit/reactive-element/decorators/custom-element.js
 var t3 = (t4) => (e5, o6) => {
   void 0 !== o6 ? o6.addInitializer(() => {
     customElements.define(t4, e5);
   }) : customElements.define(t4, e5);
 };
 
-// node_modules/@lit/reactive-element/decorators/property.js
+// ../../../../../../home/jesmak/Koodi/hass-kortit/compact-rain-gauge-card/node_modules/@lit/reactive-element/decorators/property.js
 var o5 = { attribute: true, type: String, converter: u, reflect: false, hasChanged: f };
 var r4 = (t4 = o5, e5, r6) => {
   const { kind: n5, metadata: i5 } = r6;
@@ -598,7 +598,7 @@ function n4(t4) {
   })(t4, e5, o6);
 }
 
-// node_modules/@lit/reactive-element/decorators/state.js
+// ../../../../../../home/jesmak/Koodi/hass-kortit/compact-rain-gauge-card/node_modules/@lit/reactive-element/decorators/state.js
 function r5(r6) {
   return n4({ ...r6, state: true, attribute: false });
 }
@@ -684,26 +684,22 @@ var CompactRainGaugeChart = class extends i4 {
     const active = this.active === void 0 ? void 0 : this.items[this.active];
     const x2 = active === void 0 ? 0 : this.xOf(this.active ?? 0);
     return b2`
-      <div
-        class="plot"
-        @pointermove=${this.point}
-        @pointerdown=${this.point}
-        @pointerleave=${() => this.active = void 0}
-        @click=${(event) => event.stopPropagation()}
-      >
-        <svg viewBox="0 0 ${WIDTH} ${HEIGHT}" preserveAspectRatio="none" aria-hidden="true">
-          <line class="baseline" x1="0" x2=${WIDTH} y1=${HEIGHT} y2=${HEIGHT}></line>
-          ${this.kind === "bars" ? this.bars(top) : this.line(top)}
-          ${active === void 0 || this.kind === "bars" ? A : w`<line class="cursor" x1=${x2} x2=${x2} y1="0" y2=${HEIGHT}></line>`}
-        </svg>
-        ${active === void 0 ? A : b2`<div class="bubble" style="left: ${x2}%; transform: translateX(-${x2}%)">
-                ${active.label}
-              </div>`}
-      </div>
-      <div class="heading">
-        <span class="long">${this.heading}</span><span class="brief">${this.brief || this.heading}</span>
-      </div>
-    `;
+            <div
+                class="plot"
+                @pointermove=${this.point}
+                @pointerdown=${this.point}
+                @pointerleave=${() => this.active = void 0}
+                @click=${(event) => event.stopPropagation()}
+            >
+                <svg viewBox="0 0 ${WIDTH} ${HEIGHT}" preserveAspectRatio="none" aria-hidden="true">
+                    <line class="baseline" x1="0" x2=${WIDTH} y1=${HEIGHT} y2=${HEIGHT}></line>
+                    ${this.kind === "bars" ? this.bars(top) : this.line(top)}
+                    ${active === void 0 || this.kind === "bars" ? A : w`<line class="cursor" x1=${x2} x2=${x2} y1="0" y2=${HEIGHT}></line>`}
+                </svg>
+                ${active === void 0 ? A : b2`<div class="bubble" style="left: ${x2}%; transform: translateX(-${x2}%)">${active.label}</div>`}
+            </div>
+            <div class="heading"><span class="long">${this.heading}</span><span class="brief">${this.brief || this.heading}</span></div>
+        `;
   }
   bars(top) {
     const slot = WIDTH / Math.max(this.items.length, 1);
@@ -752,98 +748,98 @@ var CompactRainGaugeChart = class extends i4 {
   }
   static get styles() {
     return i`
-      :host {
-        display: block;
-        container: chart / inline-size;
-      }
-      .heading {
-        font-size: 11px;
-        line-height: 14px;
-        color: var(--secondary-text-color);
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-      .brief {
-        display: none;
-      }
-      .plot {
-        position: relative;
-        height: 30px;
-        margin-bottom: 2px;
-        touch-action: pan-y;
-      }
-      svg {
-        display: block;
-        width: 100%;
-        height: 100%;
-        overflow: visible;
-      }
-      .bar,
-      .area {
-        fill: var(--rain-gauge-fill-color, #04acff);
-      }
-      .bar {
-        opacity: 0.75;
-      }
-      .bar.active {
-        opacity: 1;
-      }
-      .area {
-        opacity: 0.3;
-      }
-      .stroke {
-        fill: none;
-        stroke: var(--rain-gauge-fill-color, #04acff);
-        stroke-width: 1.5px;
-        vector-effect: non-scaling-stroke;
-      }
-      .baseline {
-        stroke: var(--divider-color, rgba(127, 127, 127, 0.3));
-        stroke-width: 1px;
-        vector-effect: non-scaling-stroke;
-      }
-      .cursor {
-        stroke: var(--secondary-text-color);
-        stroke-width: 1px;
-        vector-effect: non-scaling-stroke;
-      }
-      .bubble {
-        position: absolute;
-        bottom: calc(100% + 4px);
-        padding: 2px 6px;
-        border-radius: 6px;
-        background: var(--primary-text-color);
-        color: var(--card-background-color, var(--ha-card-background, #fff));
-        font-size: 11px;
-        line-height: 16px;
-        white-space: nowrap;
-        pointer-events: none;
-        z-index: 1;
-      }
+            :host {
+                display: block;
+                container: chart / inline-size;
+            }
+            .heading {
+                font-size: 11px;
+                line-height: 14px;
+                color: var(--secondary-text-color);
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+            .brief {
+                display: none;
+            }
+            .plot {
+                position: relative;
+                height: 30px;
+                margin-bottom: 2px;
+                touch-action: pan-y;
+            }
+            svg {
+                display: block;
+                width: 100%;
+                height: 100%;
+                overflow: visible;
+            }
+            .bar,
+            .area {
+                fill: var(--rain-gauge-fill-color, #04acff);
+            }
+            .bar {
+                opacity: 0.75;
+            }
+            .bar.active {
+                opacity: 1;
+            }
+            .area {
+                opacity: 0.3;
+            }
+            .stroke {
+                fill: none;
+                stroke: var(--rain-gauge-fill-color, #04acff);
+                stroke-width: 1.5px;
+                vector-effect: non-scaling-stroke;
+            }
+            .baseline {
+                stroke: var(--divider-color, rgba(127, 127, 127, 0.3));
+                stroke-width: 1px;
+                vector-effect: non-scaling-stroke;
+            }
+            .cursor {
+                stroke: var(--secondary-text-color);
+                stroke-width: 1px;
+                vector-effect: non-scaling-stroke;
+            }
+            .bubble {
+                position: absolute;
+                bottom: calc(100% + 4px);
+                padding: 2px 6px;
+                border-radius: 6px;
+                background: var(--primary-text-color);
+                color: var(--card-background-color, var(--ha-card-background, #fff));
+                font-size: 11px;
+                line-height: 16px;
+                white-space: nowrap;
+                pointer-events: none;
+                z-index: 1;
+            }
 
-      /* The narrow overrides come last, so that they win over the rules above. */
+            /* The narrow overrides come last, so that they win over the rules above. */
 
-      /* In the narrowest cards, three or four columns of a section: the short heading, a little smaller. */
-      @container chart (max-width: 130px) {
-        .heading {
-          font-size: 10px;
-        }
-        .long {
-          display: none;
-        }
-        .brief {
-          display: inline;
-        }
-      }
+            /* In the narrowest cards, three or four columns of a section: the short heading, a little smaller. */
+            @container chart (max-width: 130px) {
+                .heading {
+                    font-size: 10px;
+                }
+                .long {
+                    display: none;
+                }
+                .brief {
+                    display: inline;
+                }
+            }
 
-      /* The narrowest of all: the heading may take two lines rather than lose its period. */
-      @container chart (max-width: 100px) {
-        .heading {
-          white-space: normal;
-        }
-      }
-    `;
+            /* The narrowest of all: the heading may take two lines rather than lose its period. */
+            @container chart (max-width: 100px) {
+                .heading {
+                    white-space: normal;
+                }
+            }
+        `;
   }
 };
 __decorateClass([
@@ -1042,17 +1038,9 @@ async function fetchDays(hass, entity, count, now) {
   const days = lastDays(count, now, timeZone);
   const start = days[0].time - DAY;
   if (isCounter(entity)) {
-    return daysFromChange(
-      await statistics(hass, entity.entity_id, start, now, "day", ["change"]),
-      days,
-      timeZone
-    );
+    return daysFromChange(await statistics(hass, entity.entity_id, start, now, "day", ["change"]), days, timeZone);
   }
-  return daysFromHourly(
-    await statistics(hass, entity.entity_id, start, now, "hour", ["max"]),
-    days,
-    timeZone
-  );
+  return daysFromHourly(await statistics(hass, entity.entity_id, start, now, "hour", ["max"]), days, timeZone);
 }
 async function fetchRate(hass, rateId, hours, now) {
   if (!hass.callWS) {
@@ -1364,21 +1352,19 @@ var CompactRainGaugeCardEditor = class extends i4 {
     }
     const data = formData(this.config);
     return b2`
-      <ha-form
-        .hass=${this.hass}
-        .data=${data}
-        .schema=${schema(this.language())}
-        .computeLabel=${(entry) => this.text(`editor.${entry.name}`)}
-        .computeHelper=${(entry) => this.helper(entry.name)}
-        @value-changed=${this.valueChanged}
-      ></ha-form>
-    `;
+            <ha-form
+                .hass=${this.hass}
+                .data=${data}
+                .schema=${schema(this.language())}
+                .computeLabel=${(entry) => this.text(`editor.${entry.name}`)}
+                .computeHelper=${(entry) => this.helper(entry.name)}
+                @value-changed=${this.valueChanged}
+            ></ha-form>
+        `;
   }
   valueChanged(event) {
     this.config = configOf(event.detail.value);
-    this.dispatchEvent(
-      new CustomEvent("config-changed", { detail: { config: this.config }, bubbles: true, composed: true })
-    );
+    this.dispatchEvent(new CustomEvent("config-changed", { detail: { config: this.config }, bubbles: true, composed: true }));
   }
   text(key) {
     return translate(this.language(), key);
@@ -1513,10 +1499,7 @@ function fitCard(content) {
   gauge.classList.toggle("short", !labelledFits(gauge));
   const style = getComputedStyle(gauge);
   const height = gauge.clientHeight - (parseFloat(style.paddingTop) || 0) - (parseFloat(style.paddingBottom) || 0);
-  gauge.style.setProperty(
-    "--drop-width",
-    `${Math.max(Math.round(height * DROP_WIDTH / DROP_HEIGHT), 0)}px`
-  );
+  gauge.style.setProperty("--drop-width", `${Math.max(Math.round(height * DROP_WIDTH / DROP_HEIGHT), 0)}px`);
 }
 var CompactRainGaugeCard = class extends i4 {
   constructor() {
@@ -1586,10 +1569,9 @@ var CompactRainGaugeCard = class extends i4 {
     );
   }
   updated() {
-    const watched = [
-      this.renderRoot.querySelector(".gauge"),
-      this.renderRoot.querySelector(".content")
-    ].filter((element) => element !== null);
+    const watched = [this.renderRoot.querySelector(".gauge"), this.renderRoot.querySelector(".content")].filter(
+      (element) => element !== null
+    );
     if (watched.length !== this.observed.length || watched.some((element, index) => element !== this.observed[index])) {
       this.resizer?.disconnect();
       watched.forEach((element) => this.resizer?.observe(element));
@@ -1676,9 +1658,7 @@ var CompactRainGaugeCard = class extends i4 {
     const config = this.config;
     const entity = this.hass.states[config.entity];
     if (!entity) {
-      return b2`<ha-card
-        ><div class="missing">${this.text("common.no_entity")} ${config.entity}</div></ha-card
-      >`;
+      return b2`<ha-card><div class="missing">${this.text("common.no_entity")} ${config.entity}</div></ha-card>`;
     }
     const language = this.language();
     const unit = unitOf(entity, config);
@@ -1698,67 +1678,58 @@ var CompactRainGaugeCard = class extends i4 {
     const showIntensity = rate !== void 0 && option(config, "show_intensity");
     const tappable = isTappable(config);
     return b2`
-      <ha-card
-        class=${tappable ? "tappable" : ""}
-        style=${this.colours()}
-        role=${tappable ? "button" : A}
-        tabindex=${tappable ? "0" : A}
-        aria-label=${[
-      `${label} ${total}`,
-      rate ? `${this.text("common.rate")} ${rate}` : "",
-      showIntensity ? intensityText : ""
-    ].filter(Boolean).join(", ")}
-        @pointerdown=${() => this.gestures.pointerDown()}
-        @pointerup=${() => this.gestures.pointerUp()}
-        @pointercancel=${() => this.gestures.pointerUp()}
-        @pointerleave=${() => this.gestures.pointerUp()}
-        @click=${() => this.gestures.click()}
-        @keydown=${(event) => this.gestures.key(event)}
-      >
-        <div class="content">
-          <div class="gauge">
-            <div class="drop">
-              <svg
-                viewBox="0 0 ${DROP_WIDTH} ${DROP_HEIGHT}"
-                preserveAspectRatio="xMidYMid meet"
-                aria-hidden="true"
-              >
-                ${drop({
+            <ha-card
+                class=${tappable ? "tappable" : ""}
+                style=${this.colours()}
+                role=${tappable ? "button" : A}
+                tabindex=${tappable ? "0" : A}
+                aria-label=${[`${label} ${total}`, rate ? `${this.text("common.rate")} ${rate}` : "", showIntensity ? intensityText : ""].filter(Boolean).join(", ")}
+                @pointerdown=${() => this.gestures.pointerDown()}
+                @pointerup=${() => this.gestures.pointerUp()}
+                @pointercancel=${() => this.gestures.pointerUp()}
+                @pointerleave=${() => this.gestures.pointerUp()}
+                @click=${() => this.gestures.click()}
+                @keydown=${(event) => this.gestures.key(event)}
+            >
+                <div class="content">
+                    <div class="gauge">
+                        <div class="drop">
+                            <svg viewBox="0 0 ${DROP_WIDTH} ${DROP_HEIGHT}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                                ${drop({
       fill,
       clipId: this.clipId,
       raining: raining && option(config, "animate_rain"),
       marks: option(config, "show_scale") ? scaleMarks(maxLevel) : []
     })}
-              </svg>
-            </div>
-            <div class="figures">
-              <div class="figure total">
-                <span class="label"
-                  ><span class="long">${label}</span
-                  ><span class="brief">${this.text("common.total_short")}</span></span
-                >
-                <span class="value">${total}</span>
-              </div>
-              ${rate === void 0 ? A : b2`<div class="figure rate">
-                      <span class="label">${this.text("common.rate")}</span>
-                      <span class="value"
-                        >${rate}${showIntensity ? this.intensity(intensity, intensityText) : A}</span
-                      >
-                    </div>`}
-            </div>
-          </div>
-          ${this.extras(days, unit, language)} ${this.dailyChart(days, unit, language)}
-          ${this.rateChart(rateEntity, rateUnit, language)}
-        </div>
-      </ha-card>
-    `;
+                            </svg>
+                        </div>
+                        <div class="figures">
+                            <div class="figure total">
+                                <span class="label"
+                                    ><span class="long">${label}</span><span class="brief">${this.text("common.total_short")}</span></span
+                                >
+                                <span class="value">${total}</span>
+                            </div>
+                            ${rate === void 0 ? A : b2`<div class="figure rate">
+                                          <span class="label">${this.text("common.rate")}</span>
+                                          <span class="value"
+                                              >${rate}${showIntensity ? this.intensity(intensity, intensityText) : A}</span
+                                          >
+                                      </div>`}
+                        </div>
+                    </div>
+                    ${this.extras(days, unit, language)} ${this.dailyChart(days, unit, language)}
+                    ${this.rateChart(rateEntity, rateUnit, language)}
+                </div>
+            </ha-card>
+        `;
   }
   /** Three bars of rising height, as many filled as it rains hard. */
   intensity(level, text) {
     const filled = barsOf(level);
     return b2`<span class="intensity ${level}" title=${text} role="img" aria-label=${text}
-      >${[1, 2, 3].map((bar) => b2`<i class=${bar <= filled ? "on" : ""}></i>`)}</span
-    >`;
+            >${[1, 2, 3].map((bar) => b2`<i class=${bar <= filled ? "on" : ""}></i>`)}</span
+        >`;
   }
   /** Yesterday's rain, and that of the last 7 and 30 days, as the options ask. */
   extras(days, unit, language) {
@@ -1780,16 +1751,16 @@ var CompactRainGaugeCard = class extends i4 {
       return A;
     }
     return b2`<div class="extras">
-      ${wanted.map(
+            ${wanted.map(
       ([name, amount]) => b2`<span class="extra"
-            ><span class="label"
-              ><span class="long">${this.text(`common.${name}`)}</span
-              ><span class="brief">${this.text(`common.${name}_short`)}</span></span
-            >
-            <span class="amount">${amountText(amount, unit, language)}</span></span
-          >`
+                        ><span class="label"
+                            ><span class="long">${this.text(`common.${name}`)}</span
+                            ><span class="brief">${this.text(`common.${name}_short`)}</span></span
+                        >
+                        <span class="amount">${amountText(amount, unit, language)}</span></span
+                    >`
     )}
-    </div>`;
+        </div>`;
   }
   dailyChart(days, unit, language) {
     const config = this.config;
@@ -1809,13 +1780,13 @@ var CompactRainGaugeCard = class extends i4 {
       label: `${date.format(day.time)}: ${amountText(day.amount, unit, language)}`
     }));
     return b2`<compact-rain-gauge-chart
-      class="chart daily-chart"
-      kind="bars"
-      .items=${items}
-      .floor=${isInches(unit) ? 0.1 : 2}
-      .heading=${this.text("common.daily_chart", { days: String(count) })}
-      .brief=${this.text("common.daily_chart_short", { days: String(count) })}
-    ></compact-rain-gauge-chart>`;
+            class="chart daily-chart"
+            kind="bars"
+            .items=${items}
+            .floor=${isInches(unit) ? 0.1 : 2}
+            .heading=${this.text("common.daily_chart", { days: String(count) })}
+            .brief=${this.text("common.daily_chart_short", { days: String(count) })}
+        ></compact-rain-gauge-chart>`;
   }
   rateChart(rateEntity, unit, language) {
     const config = this.config;
@@ -1844,15 +1815,15 @@ var CompactRainGaugeCard = class extends i4 {
       label: `${time.format(point.time)}: ${amountText(point.value, perHour, language)}`
     }));
     return b2`<compact-rain-gauge-chart
-      class="chart rate-chart"
-      kind="line"
-      .items=${items}
-      .start=${start}
-      .end=${end}
-      .floor=${isInches(unit.split("/")[0]) ? 0.05 : 1}
-      .heading=${this.text("common.rate_chart", { hours: String(hours) })}
-      .brief=${this.text("common.rate_chart_short", { hours: String(hours) })}
-    ></compact-rain-gauge-chart>`;
+            class="chart rate-chart"
+            kind="line"
+            .items=${items}
+            .start=${start}
+            .end=${end}
+            .floor=${isInches(unit.split("/")[0]) ? 0.05 : 1}
+            .heading=${this.text("common.rate_chart", { hours: String(hours) })}
+            .brief=${this.text("common.rate_chart_short", { hours: String(hours) })}
+        ></compact-rain-gauge-chart>`;
   }
   /** The colours given in the configuration; without them the card follows the theme. */
   colours() {
@@ -1875,436 +1846,433 @@ var CompactRainGaugeCard = class extends i4 {
     );
   }
   text(key, values = {}) {
-    return Object.entries(values).reduce(
-      (text, [name, value]) => text.replace(`{${name}}`, value),
-      translate(this.language(), key)
-    );
+    return Object.entries(values).reduce((text, [name, value]) => text.replace(`{${name}}`, value), translate(this.language(), key));
   }
   language() {
     return this.config?.language || this.hass?.locale?.language || this.hass?.language || browserLanguage();
   }
   static get styles() {
     return i`
-      :host {
-        display: block;
-        height: 100%;
-      }
+            :host {
+                display: block;
+                height: 100%;
+            }
 
-      ha-card {
-        display: block;
-        height: 100%;
-        box-sizing: border-box;
-        overflow: hidden;
-        container: gauge / inline-size;
-      }
+            ha-card {
+                display: block;
+                height: 100%;
+                box-sizing: border-box;
+                overflow: hidden;
+                container: gauge / inline-size;
+            }
 
-      ha-card.tappable {
-        cursor: pointer;
-      }
+            ha-card.tappable {
+                cursor: pointer;
+            }
 
-      ha-card:focus-visible {
-        outline: 2px solid var(--primary-color);
-        outline-offset: -2px;
-      }
+            ha-card:focus-visible {
+                outline: 2px solid var(--primary-color);
+                outline-offset: -2px;
+            }
 
-      .content {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        overflow: hidden;
-      }
+            .content {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                overflow: hidden;
+            }
 
-      .gauge {
-        flex: 1 1 auto;
-        display: flex;
-        align-items: stretch;
-        gap: 12px;
-        min-height: 56px;
-        padding: 8px 14px 8px 10px;
-        box-sizing: border-box;
-      }
+            .gauge {
+                flex: 1 1 auto;
+                display: flex;
+                align-items: stretch;
+                gap: 12px;
+                min-height: 56px;
+                padding: 8px 14px 8px 10px;
+                box-sizing: border-box;
+            }
 
-      /*
+            /*
        * As tall as the gauge and as wide as that height calls for. The drawing is laid over the box rather than
        * in it, so it never makes the gauge taller: the grid, or the figures, decide the height.
        */
-      .drop {
-        flex: none;
-        position: relative;
-        width: var(--drop-width, 52px);
-        max-width: 45%;
-        min-height: 36px;
-      }
+            .drop {
+                flex: none;
+                position: relative;
+                width: var(--drop-width, 52px);
+                max-width: 45%;
+                min-height: 36px;
+            }
 
-      .drop svg {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        overflow: visible;
-      }
+            .drop svg {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                overflow: visible;
+            }
 
-      .level {
-        transition: transform 0.6s ease;
-      }
+            .level {
+                transition: transform 0.6s ease;
+            }
 
-      .fill {
-        fill: var(--rain-gauge-fill-color, #04acff);
-      }
+            .fill {
+                fill: var(--rain-gauge-fill-color, #04acff);
+            }
 
-      .wave {
-        animation: wave 2.4s linear infinite;
-      }
+            .wave {
+                animation: wave 2.4s linear infinite;
+            }
 
-      @keyframes wave {
-        to {
-          transform: translateX(-25px);
-        }
-      }
+            @keyframes wave {
+                to {
+                    transform: translateX(-25px);
+                }
+            }
 
-      .falling {
-        fill: var(--rain-gauge-fill-color, #04acff);
-        opacity: 0;
-        animation: fall 1.35s ease-in infinite;
-      }
+            .falling {
+                fill: var(--rain-gauge-fill-color, #04acff);
+                opacity: 0;
+                animation: fall 1.35s ease-in infinite;
+            }
 
-      @keyframes fall {
-        0% {
-          opacity: 0;
-          transform: translateY(0);
-        }
-        15% {
-          opacity: 0.9;
-        }
-        100% {
-          opacity: 0.9;
-          transform: translateY(var(--fall));
-        }
-      }
+            @keyframes fall {
+                0% {
+                    opacity: 0;
+                    transform: translateY(0);
+                }
+                15% {
+                    opacity: 0.9;
+                }
+                100% {
+                    opacity: 0.9;
+                    transform: translateY(var(--fall));
+                }
+            }
 
-      .mark {
-        stroke: var(--rain-gauge-outline-color, var(--secondary-text-color));
-        stroke-width: 1px;
-        vector-effect: non-scaling-stroke;
-        opacity: 0.6;
-      }
+            .mark {
+                stroke: var(--rain-gauge-outline-color, var(--secondary-text-color));
+                stroke-width: 1px;
+                vector-effect: non-scaling-stroke;
+                opacity: 0.6;
+            }
 
-      .outline {
-        fill: none;
-        stroke: var(--rain-gauge-outline-color, var(--secondary-text-color));
-        stroke-width: 2px;
-        vector-effect: non-scaling-stroke;
-        stroke-linejoin: round;
-      }
+            .outline {
+                fill: none;
+                stroke: var(--rain-gauge-outline-color, var(--secondary-text-color));
+                stroke-width: 2px;
+                vector-effect: non-scaling-stroke;
+                stroke-linejoin: round;
+            }
 
-      .figures {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 4px;
-        min-width: 0;
-      }
+            .figures {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                gap: 4px;
+                min-width: 0;
+            }
 
-      .figure {
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-      }
+            .figure {
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+            }
 
-      .label,
-      .value {
-        max-width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
+            .label,
+            .value {
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
 
-      .label {
-        font-size: 12px;
-        line-height: 16px;
-        color: var(--secondary-text-color);
-      }
+            .label {
+                font-size: 12px;
+                line-height: 16px;
+                color: var(--secondary-text-color);
+            }
 
-      .value {
-        font-size: 16px;
-        line-height: 20px;
-        font-weight: 500;
-        color: var(--primary-text-color);
-      }
+            .value {
+                font-size: 16px;
+                line-height: 20px;
+                font-weight: 500;
+                color: var(--primary-text-color);
+            }
 
-      /*
+            /*
        * The bars stand on the text's baseline and reach the top of its digits, whatever the font: an inline
        * flex box sits on the baseline, and a cap is the height of a capital or a digit.
        */
-      .intensity {
-        display: inline-flex;
-        align-items: flex-end;
-        vertical-align: baseline;
-        gap: 2px;
-        height: 0.7em;
-        height: 1cap;
-        margin-left: 6px;
-      }
+            .intensity {
+                display: inline-flex;
+                align-items: flex-end;
+                vertical-align: baseline;
+                gap: 2px;
+                height: 0.7em;
+                height: 1cap;
+                margin-left: 6px;
+            }
 
-      .intensity i {
-        display: block;
-        width: 3px;
-        border-radius: 1px;
-        background: var(--rain-gauge-fill-color, #04acff);
-        opacity: 0.25;
-      }
+            .intensity i {
+                display: block;
+                width: 3px;
+                border-radius: 1px;
+                background: var(--rain-gauge-fill-color, #04acff);
+                opacity: 0.25;
+            }
 
-      .intensity i:nth-child(1) {
-        height: 40%;
-      }
-      .intensity i:nth-child(2) {
-        height: 70%;
-      }
-      .intensity i:nth-child(3) {
-        height: 100%;
-      }
-      .intensity i.on {
-        opacity: 1;
-      }
+            .intensity i:nth-child(1) {
+                height: 40%;
+            }
+            .intensity i:nth-child(2) {
+                height: 70%;
+            }
+            .intensity i:nth-child(3) {
+                height: 100%;
+            }
+            .intensity i.on {
+                opacity: 1;
+            }
 
-      /*
+            /*
        * The parts under the drop are tiles of their own, as the packages are in package-tracker-card: the
        * totals, and each chart with its heading under it.
        */
-      .extras,
-      .chart {
-        flex: none;
-        margin: 0 10px 8px;
-        padding: 6px 10px;
-        border-radius: 8px;
-        background: var(--secondary-background-color, rgba(127, 127, 127, 0.1));
-      }
+            .extras,
+            .chart {
+                flex: none;
+                margin: 0 10px 8px;
+                padding: 6px 10px;
+                border-radius: 8px;
+                background: var(--secondary-background-color, rgba(127, 127, 127, 0.1));
+            }
 
-      /* The totals in equal columns, each its name over its amount, with a thin line between them. */
-      .extras {
-        display: grid;
-        grid-auto-columns: minmax(0, 1fr);
-        grid-auto-flow: column;
-        column-gap: 21px;
-        line-height: 16px;
-      }
+            /* The totals in equal columns, each its name over its amount, with a thin line between them. */
+            .extras {
+                display: grid;
+                grid-auto-columns: minmax(0, 1fr);
+                grid-auto-flow: column;
+                column-gap: 21px;
+                line-height: 16px;
+            }
 
-      .extra {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-      }
+            .extra {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+            }
 
-      /* The line sits in the middle of the gap, so that every column is as wide as the others. */
-      .extra + .extra::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: -11px;
-        border-left: 1px solid var(--divider-color, rgba(127, 127, 127, 0.3));
-      }
+            /* The line sits in the middle of the gap, so that every column is as wide as the others. */
+            .extra + .extra::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: -11px;
+                border-left: 1px solid var(--divider-color, rgba(127, 127, 127, 0.3));
+            }
 
-      .extra .label {
-        font-size: 11px;
-      }
+            .extra .label {
+                font-size: 11px;
+            }
 
-      .extra .amount {
-        font-size: 13px;
-        font-weight: 500;
-        color: var(--primary-text-color);
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
+            .extra .amount {
+                font-size: 13px;
+                font-weight: 500;
+                color: var(--primary-text-color);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
 
-      .chart {
-        padding-top: 8px;
-      }
+            .chart {
+                padding-top: 8px;
+            }
 
-      .content.hide-extras .extras,
-      .content.hide-daily-chart .daily-chart,
-      .content.hide-rate-chart .rate-chart {
-        display: none;
-      }
+            .content.hide-extras .extras,
+            .content.hide-daily-chart .daily-chart,
+            .content.hide-rate-chart .rate-chart {
+                display: none;
+            }
 
-      .missing {
-        padding: 12px 16px;
-        color: var(--error-color);
-      }
+            .missing {
+                padding: 12px 16px;
+                color: var(--error-color);
+            }
 
-      /* The short names are for the narrowest card. */
-      .brief {
-        display: none;
-      }
+            /* The short names are for the narrowest card. */
+            .brief {
+                display: none;
+            }
 
-      /* Beside the drop but with little room: the drop's own label gets short too. */
-      @container gauge (max-width: 229px) {
-        .total .long {
-          display: none;
-        }
-        .total .brief {
-          display: inline;
-        }
-      }
+            /* Beside the drop but with little room: the drop's own label gets short too. */
+            @container gauge (max-width: 229px) {
+                .total .long {
+                    display: none;
+                }
+                .total .brief {
+                    display: inline;
+                }
+            }
 
-      /* Too narrow for the totals side by side: one a row, the name left and the amount right. */
-      @container gauge (max-width: 299px) {
-        .extras {
-          grid-auto-flow: row;
-        }
-        .extra {
-          flex-direction: row;
-          justify-content: space-between;
-          gap: 8px;
-        }
-        .extra + .extra::before {
-          display: none;
-        }
-        .extra .label {
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-      }
+            /* Too narrow for the totals side by side: one a row, the name left and the amount right. */
+            @container gauge (max-width: 299px) {
+                .extras {
+                    grid-auto-flow: row;
+                }
+                .extra {
+                    flex-direction: row;
+                    justify-content: space-between;
+                    gap: 8px;
+                }
+                .extra + .extra::before {
+                    display: none;
+                }
+                .extra .label {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
 
-      /* Room to spare: larger figures. */
-      @container gauge (min-width: 260px) {
-        .gauge {
-          gap: 16px;
-          padding: 10px 18px 10px 14px;
-        }
-        .figure .label {
-          font-size: 14px;
-          line-height: 18px;
-        }
-        .value {
-          font-size: 22px;
-          line-height: 28px;
-        }
-        .extras,
-        .chart {
-          margin: 0 14px 10px;
-          padding-left: 12px;
-          padding-right: 12px;
-        }
-      }
+            /* Room to spare: larger figures. */
+            @container gauge (min-width: 260px) {
+                .gauge {
+                    gap: 16px;
+                    padding: 10px 18px 10px 14px;
+                }
+                .figure .label {
+                    font-size: 14px;
+                    line-height: 18px;
+                }
+                .value {
+                    font-size: 22px;
+                    line-height: 28px;
+                }
+                .extras,
+                .chart {
+                    margin: 0 14px 10px;
+                    padding-left: 12px;
+                    padding-right: 12px;
+                }
+            }
 
-      /* Narrow: the drop above the figures, without their labels. */
-      @container gauge (max-width: 179px) {
-        .gauge {
-          flex-direction: column;
-          align-items: center;
-          gap: 4px;
-          padding: 8px 6px;
-        }
-        .drop {
-          flex: 1 1 auto;
-          width: 100%;
-          max-width: 100%;
-          min-height: 44px;
-        }
-        .figures {
-          align-items: center;
-          gap: 0;
-          max-width: 100%;
-        }
-        .figure {
-          align-items: center;
-          max-width: 100%;
-        }
-        .figure .label,
-        .long {
-          display: none;
-        }
-        .brief {
-          display: inline;
-        }
-        .value {
-          font-size: 14px;
-          line-height: 18px;
-        }
-        .rate .value {
-          font-size: 12px;
-          line-height: 16px;
-          font-weight: 400;
-          color: var(--secondary-text-color);
-        }
-        .extras,
-        .chart {
-          margin: 0 4px 4px;
-          padding-left: 6px;
-          padding-right: 6px;
-        }
-        .extra {
-          gap: 4px;
-        }
-        .extra .amount {
-          font-size: 12px;
-        }
-      }
+            /* Narrow: the drop above the figures, without their labels. */
+            @container gauge (max-width: 179px) {
+                .gauge {
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 4px;
+                    padding: 8px 6px;
+                }
+                .drop {
+                    flex: 1 1 auto;
+                    width: 100%;
+                    max-width: 100%;
+                    min-height: 44px;
+                }
+                .figures {
+                    align-items: center;
+                    gap: 0;
+                    max-width: 100%;
+                }
+                .figure {
+                    align-items: center;
+                    max-width: 100%;
+                }
+                .figure .label,
+                .long {
+                    display: none;
+                }
+                .brief {
+                    display: inline;
+                }
+                .value {
+                    font-size: 14px;
+                    line-height: 18px;
+                }
+                .rate .value {
+                    font-size: 12px;
+                    line-height: 16px;
+                    font-weight: 400;
+                    color: var(--secondary-text-color);
+                }
+                .extras,
+                .chart {
+                    margin: 0 4px 4px;
+                    padding-left: 6px;
+                    padding-right: 6px;
+                }
+                .extra {
+                    gap: 4px;
+                }
+                .extra .amount {
+                    font-size: 12px;
+                }
+            }
 
-      /*
+            /*
        * Low, such as one row of a sections view: the drop beside the figures whatever the width, and the
        * figures without labels, the rate under the total.
        */
-      .gauge.short {
-        flex-direction: row;
-        align-items: stretch;
-        gap: 8px;
-        padding: 6px 10px 6px 8px;
-      }
-      .gauge.short .drop {
-        flex: none;
-        width: var(--drop-width, 34px);
-        min-height: 0;
-      }
-      .gauge.short .figures {
-        align-items: stretch;
-        gap: 0;
-      }
-      .gauge.short .figure {
-        align-items: flex-start;
-      }
-      .gauge.short .label,
-      .gauge.short .intensity {
-        display: none;
-      }
-      .gauge.short .value {
-        font-size: 15px;
-        line-height: 19px;
-      }
-      .gauge.short .rate .value {
-        font-size: 12px;
-        line-height: 16px;
-        font-weight: 400;
-        color: var(--secondary-text-color);
-      }
+            .gauge.short {
+                flex-direction: row;
+                align-items: stretch;
+                gap: 8px;
+                padding: 6px 10px 6px 8px;
+            }
+            .gauge.short .drop {
+                flex: none;
+                width: var(--drop-width, 34px);
+                min-height: 0;
+            }
+            .gauge.short .figures {
+                align-items: stretch;
+                gap: 0;
+            }
+            .gauge.short .figure {
+                align-items: flex-start;
+            }
+            .gauge.short .label,
+            .gauge.short .intensity {
+                display: none;
+            }
+            .gauge.short .value {
+                font-size: 15px;
+                line-height: 19px;
+            }
+            .gauge.short .rate .value {
+                font-size: 12px;
+                line-height: 16px;
+                font-weight: 400;
+                color: var(--secondary-text-color);
+            }
 
-      /* Both low and narrow, the smallest a sections view allows: a little smaller still. */
-      @container gauge (max-width: 179px) {
-        .gauge.short {
-          gap: 6px;
-          padding: 6px 8px 6px 6px;
-        }
-        .gauge.short .value {
-          font-size: 13px;
-        }
-        .gauge.short .rate .value {
-          font-size: 11px;
-        }
-      }
+            /* Both low and narrow, the smallest a sections view allows: a little smaller still. */
+            @container gauge (max-width: 179px) {
+                .gauge.short {
+                    gap: 6px;
+                    padding: 6px 8px 6px 6px;
+                }
+                .gauge.short .value {
+                    font-size: 13px;
+                }
+                .gauge.short .rate .value {
+                    font-size: 11px;
+                }
+            }
 
-      @media (prefers-reduced-motion: reduce) {
-        .level {
-          transition: none;
-        }
-        .wave,
-        .falling {
-          animation: none;
-        }
-      }
-    `;
+            @media (prefers-reduced-motion: reduce) {
+                .level {
+                    transition: none;
+                }
+                .wave,
+                .falling {
+                    animation: none;
+                }
+            }
+        `;
   }
 };
 __decorateClass([

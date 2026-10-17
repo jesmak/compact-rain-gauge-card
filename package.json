@@ -1,45 +1,45 @@
 {
-  "name": "compact-rain-gauge-card",
-  "version": "2.0.1",
-  "description": "Home Assistant dashboard card that shows the day's rain as a filling drop, sized for any grid column",
-  "keywords": [
-    "home-assistant",
-    "homeassistant",
-    "hass",
-    "lovelace",
-    "custom-cards",
-    "rain",
-    "precipitation",
-    "weather"
-  ],
-  "type": "module",
-  "private": true,
-  "license": "MIT",
-  "repository": "git@github.com:jesmak/compact-rain-gauge-card.git",
-  "engines": {
-    "node": ">=22.13"
-  },
-  "scripts": {
-    "build": "node scripts/build.mjs",
-    "typecheck": "tsc",
-    "lint": "eslint .",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run build"
-  },
-  "dependencies": {
-    "lit": "^3.3.3"
-  },
-  "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "esbuild": "^0.28.2",
-    "eslint": "^10.10.0",
-    "happy-dom": "^20.0.0",
-    "prettier": "^3.9.6",
-    "typescript": "~6.0.3",
-    "typescript-eslint": "^8.70.0",
-    "vitest": "^5.0.0"
-  }
+    "name": "compact-rain-gauge-card",
+    "version": "2.0.1",
+    "description": "Home Assistant dashboard card that shows the day's rain as a filling drop, sized for any grid column",
+    "keywords": [
+        "home-assistant",
+        "homeassistant",
+        "hass",
+        "lovelace",
+        "custom-cards",
+        "rain",
+        "precipitation",
+        "weather"
+    ],
+    "type": "module",
+    "private": true,
+    "license": "MIT",
+    "repository": "git@github.com:jesmak/compact-rain-gauge-card.git",
+    "engines": {
+        "node": ">=22.13"
+    },
+    "scripts": {
+        "build": "node scripts/build.mjs",
+        "typecheck": "tsc",
+        "lint": "eslint .",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run build"
+    },
+    "dependencies": {
+        "lit": "^3.3.3"
+    },
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "esbuild": "^0.28.2",
+        "eslint": "^10.13.0",
+        "happy-dom": "^21.0.3",
+        "prettier": "^3.9.10",
+        "typescript": "~6.0.3",
+        "typescript-eslint": "^8.71.2",
+        "vitest": "^5.0.5"
+    }
 }
