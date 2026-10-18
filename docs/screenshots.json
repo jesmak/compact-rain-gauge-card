@@ -60,7 +60,7 @@
     "shots": [
         {
             "name": "everything",
-            "width": 483,
+            "width": 500,
             "card": {
                 "type": "custom:compact-rain-gauge-card",
                 "entity": "sensor.rain_today",
