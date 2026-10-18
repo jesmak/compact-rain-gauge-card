@@ -348,11 +348,11 @@ describe("what the recorder adds", () => {
         try {
             const calls: Array<Record<string, unknown>> = [];
             const yesterday = (element: CompactRainGaugeCard) => root(element).querySelector(".extra .amount")?.textContent;
-            vi.setSystemTime(new Date(2026, 9, 14, 23, 50));
+            vi.setSystemTime(new Date(2026, 9, 14, 23, 58));
             const element = await card(hass("12", "0", "en", { days: [12, 3], calls }), { show_yesterday: true });
             await settled(element);
             expect(yesterday(element)).toBe("3 mm");
-            vi.setSystemTime(new Date(2026, 9, 15, 0, 10));
+            vi.setSystemTime(new Date(2026, 9, 15, 0, 2));
             element.hass = hass("0", "0", "en", { days: [0, 12], calls });
             await settled(element);
             expect(yesterday(element)).toBe("12 mm");
