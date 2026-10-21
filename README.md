@@ -5,8 +5,8 @@ Home Assistant dashboard card that shows the day's rain as a filling drop, at an
 [![GitHub Release][releases-shield]][releases] [![GitHub Release Date][release-date-shield]][releases] [![HACS][hacs-shield]][hacs] [![License][license-shield]](LICENSE)
 
 <p>
-<img src="https://raw.githubusercontent.com/jesmak/compact-rain-gauge-card/main/docs/images/everything-light.png#gh-light-mode-only" width="400" alt="The drop a quarter full beside today's 8.6 mm and a rate of 3.2 mm/h with two of three intensity bars, then yesterday's, the past week's and the past month's rain, and bars of the last 14 days">
-<img src="https://raw.githubusercontent.com/jesmak/compact-rain-gauge-card/main/docs/images/everything-dark.png#gh-dark-mode-only" width="400" alt="The drop a quarter full beside today's 8.6 mm and a rate of 3.2 mm/h with two of three intensity bars, then yesterday's, the past week's and the past month's rain, and bars of the last 14 days">
+<img src="https://raw.githubusercontent.com/jesmak/compact-rain-gauge-card/main/docs/images/everything-light.png#gh-light-mode-only" width="400" alt="The drop a quarter full beside today's 8.6 mm and a rate of 3.2 mm/h with two of three intensity bars, then yesterday's, the past week's and the past month's rain, and bars of the last 14 days against a dashed line at 5 mm">
+<img src="https://raw.githubusercontent.com/jesmak/compact-rain-gauge-card/main/docs/images/everything-dark.png#gh-dark-mode-only" width="400" alt="The drop a quarter full beside today's 8.6 mm and a rate of 3.2 mm/h with two of three intensity bars, then yesterday's, the past week's and the past month's rain, and bars of the last 14 days against a dashed line at 5 mm">
 <img src="https://raw.githubusercontent.com/jesmak/compact-rain-gauge-card/main/docs/images/sizes-light.png#gh-light-mode-only" width="400" alt="The same card at five sizes in one section, from a quarter of its width and one row to all of it and two rows, the drop beside the figures, above them, or small beside unlabelled figures">
 <img src="https://raw.githubusercontent.com/jesmak/compact-rain-gauge-card/main/docs/images/sizes-dark.png#gh-dark-mode-only" width="400" alt="The same card at five sizes in one section, from a quarter of its width and one row to all of it and two rows, the drop beside the figures, above them, or small beside unlabelled figures">
 </p>
@@ -21,7 +21,8 @@ sensor for it, how hard it is raining now. Tapping it opens the sensor's details
 - **Recent days**, if you want them: yesterday's rain, and that of the past week and the past month (the last 7 and
   30 days).
 - **Two small charts**, if you want them: the rain day by day as bars, and the rain rate over the last hours as a
-  line. Pointing at either, or touching it, shows the value there.
+  line. Dashed lines at round values, such as 5 and 10 mm, give the scale, with their values beside the chart.
+  Pointing at either chart, or touching it, shows the value there.
 
 It fits whatever space it is given. In a sections view it works at every width from a quarter of the section to all
 of it, and at one row or more. In a masonry view or a horizontal stack it is as tall as its contents need.

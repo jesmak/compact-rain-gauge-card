@@ -22,9 +22,19 @@ export function intensityOf(rate: number | null, unit: string): Intensity {
     if (rate === null || rate <= 0) {
         return "none";
     }
-    const perHour = /\/\s*(min|minute)/i.test(unit) ? rate * 60 : /\/\s*(d|day)/i.test(unit) ? rate / 24 : rate;
+    const perHour = rate * hourlyFactor(unit);
     const mm = isInches(unit) ? perHour * MM_PER_INCH : perHour;
     return STEPS.find(([floor]) => mm > floor)?.[1] ?? "light";
+}
+
+/** The least the rate chart's top stands for: 1 mm or 0.05 in an hour, in the sensor's own unit. */
+export function rateFloor(unit: string): number {
+    return (isInches(unit) ? 0.05 : 1) / hourlyFactor(unit);
+}
+
+/** What a rate in this unit is multiplied by to give it per hour: 60 for one per minute, 1/24 for one per day. */
+function hourlyFactor(unit: string): number {
+    return /\/\s*(min|minute)/i.test(unit) ? 60 : /\/\s*(d|day)/i.test(unit) ? 1 / 24 : 1;
 }
 
 /** How many of the indicator's three bars are filled. */

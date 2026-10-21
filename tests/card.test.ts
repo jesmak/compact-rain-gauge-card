@@ -491,6 +491,36 @@ describe("the amounts of recent days", () => {
     });
 });
 
+describe("the charts' marker lines", () => {
+    it("are written in the card's language", async () => {
+        const element = await card(hass("10", "0.4", "en", { days: [10, 4] }), {
+            language: "fi",
+            hourly_rate_entity: RATE,
+            show_daily_chart: true,
+            show_rate_chart: true,
+        });
+        await settled(element);
+        const charts = [...root(element).querySelectorAll(".chart")] as Array<HTMLElement & { language: string }>;
+        expect(charts.map((chart) => chart.language)).toEqual(["fi", "fi"]);
+    });
+});
+
+describe("the charts' floors", () => {
+    it("come from the sensor each chart shows, the rate's in its own unit", async () => {
+        const state = hass("10", "0.4", "en", { days: [1, 0.5] });
+        state.states[RATE] = {
+            entity_id: RATE,
+            state: "0.4",
+            last_changed: "2026-09-22",
+            attributes: { unit_of_measurement: "mm/d", device_class: "precipitation_intensity" },
+        };
+        const element = await card(state, { hourly_rate_entity: RATE, show_daily_chart: true, show_rate_chart: true });
+        await settled(element);
+        const charts = [...root(element).querySelectorAll(".chart")] as Array<HTMLElement & { floor: number }>;
+        expect(charts.map((chart) => chart.floor)).toEqual([2, 24]);
+    });
+});
+
 describe("the narrowest card", () => {
     it("has short names for the totals and the charts beside the long ones", async () => {
         const element = await card(hass("10", "0", "fi", { days: [1, 2, 3, 4, 5, 6, 7, 8] }), {

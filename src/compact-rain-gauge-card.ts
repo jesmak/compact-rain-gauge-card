@@ -24,7 +24,7 @@ import { NO_VALUE, fillOf, findRainSensor, formatReading, isInches, maxLevelOf, 
 import type { HassEntity, HomeAssistant } from "./hass";
 import { HOUR, LOOKBACK_DAYS, MAX_RATE_CHART_HOURS, WEEK_DAYS, dayFormatter, fetchDays, fetchRate, isCounter, sumOf } from "./history";
 import type { DayAmount, Point } from "./history";
-import { barsOf, intensityOf } from "./intensity";
+import { barsOf, intensityOf, rateFloor } from "./intensity";
 import type { Intensity } from "./intensity";
 import { browserLanguage, translate } from "./localize/localize";
 import { checkNumbers, option } from "./types";
@@ -441,6 +441,7 @@ export class CompactRainGaugeCard extends LitElement {
             kind="bars"
             .items=${items}
             .floor=${isInches(unit) ? 0.1 : 2}
+            .language=${language}
             .heading=${this.text("common.daily_chart", { days: String(count) })}
             .brief=${this.text("common.daily_chart_short", { days: String(count) })}
         ></compact-rain-gauge-chart>`;
@@ -482,7 +483,8 @@ export class CompactRainGaugeCard extends LitElement {
             .items=${items}
             .start=${start}
             .end=${end}
-            .floor=${isInches(unit) ? 0.05 : 1}
+            .floor=${rateFloor(unit)}
+            .language=${language}
             .heading=${this.text("common.rate_chart", { hours: String(hours) })}
             .brief=${this.text("common.rate_chart_short", { hours: String(hours) })}
         ></compact-rain-gauge-chart>`;

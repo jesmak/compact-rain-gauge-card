@@ -18,6 +18,11 @@ const WIDTH = 100;
 const HEIGHT = 32;
 /** Room above the highest value, so a peak doesn't touch the top. */
 const TOP = 2;
+/** The plot's height in pixels, as in the styles below. */
+const PLOT_HEIGHT = 30;
+/** The least room in pixels between two marker lines, and between the lowest and the baseline, so their values fit. */
+const MARK_GAP = 10;
+const BASELINE_GAP = 5;
 
 @customElement("compact-rain-gauge-chart")
 export class CompactRainGaugeChart extends LitElement {
@@ -31,6 +36,8 @@ export class CompactRainGaugeChart extends LitElement {
     @property() public heading = "";
     /** A shorter heading for a chart too narrow for the long one. */
     @property() public brief = "";
+    /** The language the marker lines' values are written in. */
+    @property() public language = "en";
     @state() private active?: number;
 
     protected render(): TemplateResult {
@@ -38,31 +45,48 @@ export class CompactRainGaugeChart extends LitElement {
         const top = Math.max(this.floor, ...values);
         const active = this.active === undefined ? undefined : this.items[this.active];
         const x = active === undefined ? 0 : this.xOf(this.active ?? 0);
+        const marks = marksUnder(top, roundValues(top));
+        const number = new Intl.NumberFormat(this.language);
+        const y = (value: number) => HEIGHT - heightOf(value, top);
         return html`
-            <div
-                class="plot"
-                @pointermove=${this.point}
-                @pointerdown=${(event: PointerEvent) => {
-                    event.stopPropagation();
-                    this.point(event);
-                }}
-                @pointerleave=${() => (this.active = undefined)}
-                @click=${(event: Event) => event.stopPropagation()}
-            >
-                <svg viewBox="0 0 ${WIDTH} ${HEIGHT}" preserveAspectRatio="none" aria-hidden="true">
-                    <line class="baseline" x1="0" x2=${WIDTH} y1=${HEIGHT} y2=${HEIGHT}></line>
-                    ${this.kind === "bars" ? this.bars(top) : this.line(top)}
-                    ${
-                        active === undefined || this.kind === "bars"
-                            ? nothing
-                            : svg`<line class="cursor" x1=${x} x2=${x} y1="0" y2=${HEIGHT}></line>`
-                    }
-                </svg>
+            <div class="frame">
                 ${
-                    active === undefined
+                    marks.length === 0
                         ? nothing
-                        : html`<div class="bubble" style="left: ${x}%; transform: translateX(-${x}%)">${active.label}</div>`
+                        : html`<div class="axis">
+                              ${marks.map((mark) => html`<span class="sizer">${number.format(mark)}</span>`)}
+                              ${marks.map(
+                                  (mark) =>
+                                      html`<span class="value" style="top: ${(y(mark) / HEIGHT) * 100}%">${number.format(mark)}</span>`,
+                              )}
+                          </div>`
                 }
+                <div
+                    class="plot"
+                    @pointermove=${this.point}
+                    @pointerdown=${(event: PointerEvent) => {
+                        event.stopPropagation();
+                        this.point(event);
+                    }}
+                    @pointerleave=${() => (this.active = undefined)}
+                    @click=${(event: Event) => event.stopPropagation()}
+                >
+                    <svg viewBox="0 0 ${WIDTH} ${HEIGHT}" preserveAspectRatio="none" aria-hidden="true">
+                        ${marks.map((mark) => svg`<line class="mark" x1="0" x2=${WIDTH} y1=${y(mark)} y2=${y(mark)}></line>`)}
+                        <line class="baseline" x1="0" x2=${WIDTH} y1=${HEIGHT} y2=${HEIGHT}></line>
+                        ${this.kind === "bars" ? this.bars(top) : this.line(top)}
+                        ${
+                            active === undefined || this.kind === "bars"
+                                ? nothing
+                                : svg`<line class="cursor" x1=${x} x2=${x} y1="0" y2=${HEIGHT}></line>`
+                        }
+                    </svg>
+                    ${
+                        active === undefined
+                            ? nothing
+                            : html`<div class="bubble" style="left: ${x}%; transform: translateX(-${x}%)">${active.label}</div>`
+                    }
+                </div>
             </div>
             <div class="heading"><span class="long">${this.heading}</span><span class="brief">${this.brief || this.heading}</span></div>
         `;
@@ -71,7 +95,7 @@ export class CompactRainGaugeChart extends LitElement {
     private bars(top: number): TemplateResult {
         const slot = WIDTH / Math.max(this.items.length, 1);
         return svg`${this.items.map((item, index) => {
-            const height = item.value ? Math.max((item.value / top) * (HEIGHT - TOP), 0.8) : 0;
+            const height = item.value ? Math.max(heightOf(item.value, top), 0.8) : 0;
             return svg`<rect class=${index === this.active ? "bar active" : "bar"} x=${index * slot + slot * 0.15}
         y=${HEIGHT - height} width=${slot * 0.7} height=${height}></rect>`;
         })}`;
@@ -83,7 +107,7 @@ export class CompactRainGaugeChart extends LitElement {
         if (points.length === 0) {
             return svg``;
         }
-        const y = (value: number) => HEIGHT - (value / top) * (HEIGHT - TOP);
+        const y = (value: number) => HEIGHT - heightOf(value, top);
         let path = "";
         points.forEach((point, index) => {
             const x = this.xAt(point.time);
@@ -135,11 +159,45 @@ export class CompactRainGaugeChart extends LitElement {
             .brief {
                 display: none;
             }
+            .frame {
+                display: flex;
+                align-items: flex-start;
+                margin-bottom: 2px;
+            }
             .plot {
                 position: relative;
+                flex: 1;
+                min-width: 0;
                 height: 30px;
-                margin-bottom: 2px;
                 touch-action: pan-y;
+            }
+            .axis {
+                position: relative;
+                height: 30px;
+                margin-right: 4px;
+                font-size: 9px;
+                line-height: 9px;
+                color: var(--secondary-text-color);
+                font-variant-numeric: tabular-nums;
+            }
+            /* The values, unseen and on no line, give the axis the width of the widest. */
+            .sizer {
+                display: block;
+                height: 0;
+                overflow: hidden;
+                visibility: hidden;
+            }
+            .value {
+                position: absolute;
+                right: 0;
+                transform: translateY(-50%);
+                white-space: nowrap;
+            }
+            .mark {
+                stroke: var(--divider-color, rgba(127, 127, 127, 0.3));
+                stroke-width: 1px;
+                stroke-dasharray: 2 3;
+                vector-effect: non-scaling-stroke;
             }
             svg {
                 display: block;
@@ -213,6 +271,41 @@ export class CompactRainGaugeChart extends LitElement {
             }
         `;
     }
+}
+
+/** How high a value stands in the chart, in its units, when the chart's top stands for `top`. */
+function heightOf(value: number, top: number): number {
+    return (value / top) * (HEIGHT - TOP);
+}
+
+/** The round values up to a top, 1, 2 and 5 times a power of ten, largest first so the lines reach up the chart. */
+export function roundValues(top: number): number[] {
+    const values: number[] = [];
+    for (let power = -2; 10 ** power <= top; power++) {
+        for (const step of [1, 2, 5]) {
+            const value = parseFloat((step * 10 ** power).toPrecision(1));
+            if (value <= top) {
+                values.push(value);
+            }
+        }
+    }
+    return values.reverse();
+}
+
+/**
+ * The values to draw marker lines at, lowest first: the candidates, taken in order of preference, that the chart
+ * reaches, leaving out any too close to the baseline or to a line already kept for their values to fit.
+ */
+export function marksUnder(top: number, candidates: number[]): number[] {
+    const pixels = (value: number) => heightOf(value, top) * (PLOT_HEIGHT / HEIGHT);
+    const marks: number[] = [];
+    for (const value of candidates) {
+        const clear = marks.every((mark) => Math.abs(pixels(value) - pixels(mark)) >= MARK_GAP);
+        if (value <= top && pixels(value) >= BASELINE_GAP && clear) {
+            marks.push(value);
+        }
+    }
+    return marks.sort((a, b) => a - b);
 }
 
 /** Which item a share of the chart's width points at. */
