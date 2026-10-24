@@ -1,4 +1,4 @@
-/*! compact-rain-gauge-card 2.2.0 | MIT License */
+/*! compact-rain-gauge-card 2.2.1 | MIT License */
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __decorateClass = (decorators, target, key, kind) => {
@@ -967,7 +967,7 @@ function indexAt(kind, items, share, start, end) {
 }
 
 // src/const.ts
-var CARD_VERSION = "2.2.0";
+var CARD_VERSION = "2.2.1";
 var DEFAULT_MAX_LEVEL_MM = 40;
 var MM_PER_INCH = 25.4;
 
