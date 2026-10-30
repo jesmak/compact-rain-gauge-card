@@ -668,7 +668,7 @@ var GestureDetector = class {
 var WIDTH = 100;
 var HEIGHT = 32;
 var TOP = 2;
-var PLOT_HEIGHT = 30;
+var PLOT_HEIGHT = 24;
 var MARK_GAP = 10;
 var BASELINE_GAP = 5;
 var CompactRainGaugeChart = class extends i4 {
@@ -792,12 +792,12 @@ var CompactRainGaugeChart = class extends i4 {
                 position: relative;
                 flex: 1;
                 min-width: 0;
-                height: 30px;
+                height: 24px;
                 touch-action: pan-y;
             }
             .axis {
                 position: relative;
-                height: 30px;
+                height: 24px;
                 margin-right: 4px;
                 font-size: 9px;
                 line-height: 9px;
@@ -2435,10 +2435,12 @@ var CompactRainGaugeCard = class extends i4 {
                 }
             }
 
-            /* A chart is 60 px, so with this margin it takes exactly the 64 px row it asks for, at every width. A wider
-               margin left a wide card without the totals a few pixels short, and the fitting left the chart out. */
+            /* The same gap under every part at every width, so the totals and the charts are evenly spaced down to the card's
+               edge. A chart is 54 px, so with its gap it takes exactly the 64 px row it asks for. A chart and a gap taller
+               than that left a wide card without the totals a few pixels short, and the fitting left the chart out. */
+            .content .extras,
             .content .chart {
-                margin-bottom: 4px;
+                margin-bottom: 10px;
             }
         `;
   }

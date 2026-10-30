@@ -973,10 +973,12 @@ export class CompactRainGaugeCard extends LitElement {
                 }
             }
 
-            /* A chart is 60 px, so with this margin it takes exactly the 64 px row it asks for, at every width. A wider
-               margin left a wide card without the totals a few pixels short, and the fitting left the chart out. */
+            /* The same gap under every part at every width, so the totals and the charts are evenly spaced down to the card's
+               edge. A chart is 54 px, so with its gap it takes exactly the 64 px row it asks for. A chart and a gap taller
+               than that left a wide card without the totals a few pixels short, and the fitting left the chart out. */
+            .content .extras,
             .content .chart {
-                margin-bottom: 4px;
+                margin-bottom: 10px;
             }
         `;
     }

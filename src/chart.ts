@@ -19,7 +19,7 @@ const HEIGHT = 32;
 /** Room above the highest value, so a peak doesn't touch the top. */
 const TOP = 2;
 /** The plot's height in pixels, as in the styles below. */
-const PLOT_HEIGHT = 30;
+const PLOT_HEIGHT = 24;
 /** The least room in pixels between two marker lines, and between the lowest and the baseline, so their values fit. */
 const MARK_GAP = 10;
 const BASELINE_GAP = 5;
@@ -168,12 +168,12 @@ export class CompactRainGaugeChart extends LitElement {
                 position: relative;
                 flex: 1;
                 min-width: 0;
-                height: 30px;
+                height: 24px;
                 touch-action: pan-y;
             }
             .axis {
                 position: relative;
-                height: 30px;
+                height: 24px;
                 margin-right: 4px;
                 font-size: 9px;
                 line-height: 9px;

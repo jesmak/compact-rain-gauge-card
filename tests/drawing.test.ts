@@ -65,16 +65,16 @@ describe("the marker lines", () => {
     it.each([
         [2, [1, 2]],
         [3.3, [2]],
-        [7, [2, 5]],
-        [12, [5, 10]],
+        [7, [5]],
+        [12, [10]],
         [30, [20]],
-        [8.4375, [2, 5]],
+        [8.4375, [5]],
         [150, [100]],
         [1, [0.5, 1]],
         [0.1, [0.05, 0.1]],
         [0.05, [0.02, 0.05]],
-        [24, [10, 20]],
-        [1.2, [0.5, 1]],
+        [24, [20]],
+        [1.2, [1]],
         [0.005, []],
     ])("reach up the chart from the largest round value, apart enough for their values, at a top of %s", (top, marks) => {
         expect(marksUnder(top, roundValues(top))).toEqual(marks);
