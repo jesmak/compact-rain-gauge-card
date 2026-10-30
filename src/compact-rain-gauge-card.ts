@@ -98,6 +98,8 @@ export function fitCard(content: HTMLElement): void {
 @customElement("compact-rain-gauge-card")
 export class CompactRainGaugeCard extends LitElement {
     @property({ attribute: false }) public hass?: HomeAssistant;
+    /** Set by the dashboard: "grid" in a sections view. */
+    @property({ attribute: false }) public layout?: string;
     @state() private config?: CompactRainGaugeCardConfig;
     /** The rain of recent days, from the recorder. Today's is replaced with the sensor's own state. */
     @state() private days?: DayAmount[];
@@ -326,7 +328,7 @@ export class CompactRainGaugeCard extends LitElement {
         return html`
             <ha-card
                 class=${tappable ? "tappable" : ""}
-                style=${this.colours()}
+                style=${[this.colours(), this.autoHeight()].filter(Boolean).join("; ")}
                 role=${tappable ? "button" : nothing}
                 tabindex=${tappable ? "0" : nothing}
                 aria-label=${[`${label} ${total}`, rate ? `${this.text("common.rate")} ${rate}` : "", showIntensity ? intensityText : ""]
@@ -500,6 +502,21 @@ export class CompactRainGaugeCard extends LitElement {
             styles.push(`--rain-gauge-outline-color: ${this.config.border_colour}`);
         }
         return styles.join("; ");
+    }
+
+    /**
+     * In a sections view whose rows are left automatic, the card takes the height of the rows it asks for by default
+     * (56 px each and the 8 px gaps between them) rather than its contents', which would leave part of its last row
+     * empty. Given a number of rows, it fills them, and in a masonry view its contents decide.
+     */
+    private autoHeight(): string {
+        const grid = this.config?.grid_options as { rows?: unknown } | undefined;
+        const older = this.config?.layout_options as { grid_rows?: unknown } | undefined;
+        const rows = grid ? grid.rows : older?.grid_rows;
+        if (this.layout !== "grid" || typeof rows === "number") {
+            return "";
+        }
+        return `height: ${(2 + this.parts()) * 64 - 8}px`;
     }
 
     private act(gesture: Gesture): void {
@@ -954,6 +971,12 @@ export class CompactRainGaugeCard extends LitElement {
                 .falling {
                     animation: none;
                 }
+            }
+
+            /* A chart is 60 px, so with this margin it takes exactly the 64 px row it asks for, at every width. A wider
+               margin left a wide card without the totals a few pixels short, and the fitting left the chart out. */
+            .content .chart {
+                margin-bottom: 4px;
             }
         `;
     }

@@ -211,6 +211,30 @@ describe("the size of the card", () => {
         expect(element.getGridOptions().rows).toBe(3);
     });
 
+    it.each([
+        ["automatic rows in a sections view", "grid", { grid_options: { rows: "auto" } }, "height: 248px"],
+        ["the older layout options' automatic rows in a sections view", "grid", { layout_options: { grid_rows: "auto" } }, "height: 248px"],
+        ["no rows given in a sections view", "grid", {}, "height: 248px"],
+        ["a number of rows in a sections view", "grid", { grid_options: { rows: 3 } }, ""],
+        ["a masonry view", undefined, { grid_options: { rows: "auto" } }, ""],
+    ])("is as tall as its own rows with %s, and otherwise fills the space it gets", async (_name, layout, extra, height) => {
+        const element = document.createElement("compact-rain-gauge-card") as CompactRainGaugeCard;
+        element.setConfig({
+            type: "custom:compact-rain-gauge-card",
+            entity: RAIN,
+            hourly_rate_entity: RATE,
+            show_daily_chart: true,
+            show_rate_chart: true,
+            ...extra,
+        } as never);
+        element.hass = hass();
+        element.layout = layout;
+        document.body.append(element);
+        await element.updateComplete;
+        const style = root(element).querySelector("ha-card")?.getAttribute("style") ?? "";
+        expect(style.split("; ").find((part) => part.startsWith("height")) ?? "").toBe(height);
+    });
+
     it("leaves out the rate chart first, then the daily one, then the extra totals, until the rest fits", () => {
         const { content } = layout({ card: 200, content: () => 300 - hidden() * 60 });
         fitCard(content);

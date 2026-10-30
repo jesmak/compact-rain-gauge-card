@@ -95,7 +95,8 @@ The card measures the space it gets and lays itself out to fit:
 
 The recent days and the charts go under the drop, across the card, each on a tile of its own. In a sections view the
 card starts at half the width and two rows, with a row more for the recent days and for each chart, and can be resized
-down to a quarter of the width and one row. When it is too low for everything, the rate chart is left out first, then
+down to a quarter of the width and one row. With its rows set to automatic it keeps that height, so it always fills
+whole rows, and every part fits it at any width. When it is too low for everything, the rate chart is left out first, then
 the daily bars, then the recent days, rather than squeezing the drop's figures out of their labels. The figures are
 never cut short. When they need the room, the drop gets narrower. Otherwise it keeps its shape, growing with the card's
 height and shrinking with it.

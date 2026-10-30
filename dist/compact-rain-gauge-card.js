@@ -1812,7 +1812,7 @@ var CompactRainGaugeCard = class extends i4 {
     return b2`
             <ha-card
                 class=${tappable ? "tappable" : ""}
-                style=${this.colours()}
+                style=${[this.colours(), this.autoHeight()].filter(Boolean).join("; ")}
                 role=${tappable ? "button" : A}
                 tabindex=${tappable ? "0" : A}
                 aria-label=${[`${label} ${total}`, rate ? `${this.text("common.rate")} ${rate}` : "", showIntensity ? intensityText : ""].filter(Boolean).join(", ")}
@@ -1969,6 +1969,20 @@ var CompactRainGaugeCard = class extends i4 {
       styles.push(`--rain-gauge-outline-color: ${this.config.border_colour}`);
     }
     return styles.join("; ");
+  }
+  /**
+   * In a sections view whose rows are left automatic, the card takes the height of the rows it asks for by default
+   * (56 px each and the 8 px gaps between them) rather than its contents', which would leave part of its last row
+   * empty. Given a number of rows, it fills them, and in a masonry view its contents decide.
+   */
+  autoHeight() {
+    const grid = this.config?.grid_options;
+    const older = this.config?.layout_options;
+    const rows = grid ? grid.rows : older?.grid_rows;
+    if (this.layout !== "grid" || typeof rows === "number") {
+      return "";
+    }
+    return `height: ${(2 + this.parts()) * 64 - 8}px`;
   }
   act(gesture) {
     this.dispatchEvent(
@@ -2420,12 +2434,21 @@ var CompactRainGaugeCard = class extends i4 {
                     animation: none;
                 }
             }
+
+            /* A chart is 60 px, so with this margin it takes exactly the 64 px row it asks for, at every width. A wider
+               margin left a wide card without the totals a few pixels short, and the fitting left the chart out. */
+            .content .chart {
+                margin-bottom: 4px;
+            }
         `;
   }
 };
 __decorateClass([
   n4({ attribute: false })
 ], CompactRainGaugeCard.prototype, "hass", 2);
+__decorateClass([
+  n4({ attribute: false })
+], CompactRainGaugeCard.prototype, "layout", 2);
 __decorateClass([
   r5()
 ], CompactRainGaugeCard.prototype, "config", 2);
