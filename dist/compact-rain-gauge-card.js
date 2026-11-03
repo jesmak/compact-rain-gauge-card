@@ -783,7 +783,9 @@ var CompactRainGaugeChart = class extends i4 {
             .brief {
                 display: none;
             }
+            /* A chart reads left to right in any language, as its time does, so its axis stays on the left of the plot. */
             .frame {
+                direction: ltr;
                 display: flex;
                 align-items: flex-start;
                 margin-bottom: 2px;
@@ -2184,7 +2186,7 @@ var CompactRainGaugeCard = class extends i4 {
                 gap: 2px;
                 height: 0.7em;
                 height: 1cap;
-                margin-left: 6px;
+                margin-inline-start: 6px;
             }
 
             .intensity i {
@@ -2243,8 +2245,8 @@ var CompactRainGaugeCard = class extends i4 {
                 position: absolute;
                 top: 0;
                 bottom: 0;
-                left: -11px;
-                border-left: 1px solid var(--divider-color, rgba(127, 127, 127, 0.3));
+                inset-inline-start: -11px;
+                border-inline-start: 1px solid var(--divider-color, rgba(127, 127, 127, 0.3));
             }
 
             /* Each on one line, so that fitExtras() can tell when a total doesn't fit its column. */
