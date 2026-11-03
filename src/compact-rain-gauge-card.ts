@@ -69,16 +69,36 @@ function labelledFits(gauge: HTMLElement): boolean {
 }
 
 /**
+ * Puts the totals one to a row when side by side any of them doesn't fit its column, its name and its amount each
+ * on one line. They are held to their drawn height while they are measured, so the card doesn't change height.
+ */
+export function fitExtras(content: HTMLElement): void {
+    const extras = content.querySelector<HTMLElement>(".extras");
+    if (!extras) {
+        return;
+    }
+    extras.style.height = getComputedStyle(extras).height;
+    extras.classList.remove("stacked");
+    const texts = [...extras.querySelectorAll<HTMLElement>(".extra .label, .extra .amount")];
+    extras.classList.toggle(
+        "stacked",
+        texts.some((text) => text.scrollWidth > text.clientWidth),
+    );
+    extras.style.height = "";
+}
+
+/**
  * Fits the card to the height it has, which CSS can't: in a sections view the grid fixes it, and in a masonry
- * view the contents make it, so only measuring tells the two apart. The parts under the drop are left out,
- * least needed first, until the rest fits the card and the drop's figures keep their labels. Only when even
- * that isn't enough does the gauge go low, its figures without labels. Last, the drop is made as wide as the
- * height it ends up with calls for.
+ * view the contents make it, so only measuring tells the two apart. The totals are laid out first, as one to a
+ * row they are taller. Then the parts under the drop are left out, least needed first, until the rest fits the
+ * card and the drop's figures keep their labels. Only when even that isn't enough does the gauge go low, its
+ * figures without labels. Last, the drop is made as wide as the height it ends up with calls for.
  */
 export function fitCard(content: HTMLElement): void {
     const gauge = content.querySelector<HTMLElement>(".gauge");
     content.classList.remove(...OPTIONAL_PARTS.map((part) => `hide-${part}`));
     gauge?.classList.remove("short");
+    fitExtras(content);
     for (const part of OPTIONAL_PARTS) {
         const fits = content.scrollHeight <= content.clientHeight + 1;
         if (fits && (!gauge || labelledFits(gauge))) {
@@ -112,7 +132,7 @@ export class CompactRainGaugeCard extends LitElement {
         () => this.config,
         (gesture) => this.act(gesture),
     );
-    /** Fits the card again whenever its height, or the gauge's, changes. */
+    /** Fits the card again whenever its size, or the gauge's, changes: its width lays out the totals, its height the parts. */
     private readonly resizer =
         typeof ResizeObserver === "undefined"
             ? undefined
@@ -197,6 +217,12 @@ export class CompactRainGaugeCard extends LitElement {
             this.resizer?.disconnect();
             watched.forEach((element) => this.resizer?.observe(element));
             this.observed = watched;
+        }
+        // A part can come or go, and an amount grow too long for its column, without the card changing size, so no
+        // observer would notice.
+        const content = this.renderRoot.querySelector<HTMLElement>(".content");
+        if (content) {
+            fitCard(content);
         }
         if (this.isStale()) {
             void this.refresh();
@@ -769,15 +795,37 @@ export class CompactRainGaugeCard extends LitElement {
                 border-left: 1px solid var(--divider-color, rgba(127, 127, 127, 0.3));
             }
 
+            /* Each on one line, so that fitExtras() can tell when a total doesn't fit its column. */
             .extra .label {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
                 font-size: 11px;
             }
 
-            /* An amount is never cut short: in a narrow column its unit wraps under the number. */
+            /* An amount is never cut short: when one doesn't fit its column, the totals go one to a row. */
             .extra .amount {
+                overflow: hidden;
+                white-space: nowrap;
                 font-size: 13px;
                 font-weight: 500;
                 color: var(--primary-text-color);
+            }
+
+            /* One to a row, the name left and the amount right. */
+            .extras.stacked {
+                grid-auto-flow: row;
+            }
+            .extras.stacked .extra {
+                flex-direction: row;
+                justify-content: space-between;
+                gap: 8px;
+            }
+            .extras.stacked .extra + .extra::before {
+                display: none;
+            }
+            .extras.stacked .amount {
+                flex: none;
             }
 
             .chart {
@@ -807,30 +855,6 @@ export class CompactRainGaugeCard extends LitElement {
                 }
                 .total .brief {
                     display: inline;
-                }
-            }
-
-            /* Too narrow for the totals side by side: one a row, the name left and the amount right. */
-            @container gauge (max-width: 299px) {
-                .extras {
-                    grid-auto-flow: row;
-                }
-                .extra {
-                    flex-direction: row;
-                    justify-content: space-between;
-                    gap: 8px;
-                }
-                .extra + .extra::before {
-                    display: none;
-                }
-                .extra .label {
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                }
-                .extra .amount {
-                    flex: none;
-                    white-space: nowrap;
                 }
             }
 
@@ -903,7 +927,7 @@ export class CompactRainGaugeCard extends LitElement {
                     padding-left: 6px;
                     padding-right: 6px;
                 }
-                .extra {
+                .extras.stacked .extra {
                     gap: 4px;
                 }
                 .extra .amount {

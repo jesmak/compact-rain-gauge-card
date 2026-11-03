@@ -1,4 +1,4 @@
-/*! compact-rain-gauge-card 2.2.1 | MIT License */
+/*! compact-rain-gauge-card 2.2.2 | MIT License */
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __decorateClass = (decorators, target, key, kind) => {
@@ -874,23 +874,20 @@ var CompactRainGaugeChart = class extends i4 {
 
             /* The narrow overrides come last, so that they win over the rules above. */
 
-            /* In the narrowest cards, three or four columns of a section: the short heading, a little smaller. */
+            /*
+             * In the narrowest cards, three or four columns of a section: the short heading, a little smaller, which
+             * takes two lines when it doesn't fit on one rather than lose its period.
+             */
             @container chart (max-width: 130px) {
                 .heading {
                     font-size: 10px;
+                    white-space: normal;
                 }
                 .long {
                     display: none;
                 }
                 .brief {
                     display: inline;
-                }
-            }
-
-            /* The narrowest of all: the heading may take two lines rather than lose its period. */
-            @container chart (max-width: 100px) {
-                .heading {
-                    white-space: normal;
                 }
             }
         `;
@@ -967,7 +964,7 @@ function indexAt(kind, items, share, start, end) {
 }
 
 // src/const.ts
-var CARD_VERSION = "2.2.1";
+var CARD_VERSION = "2.2.2";
 var DEFAULT_MAX_LEVEL_MM = 40;
 var MM_PER_INCH = 25.4;
 
@@ -1594,10 +1591,25 @@ function labelledFits(gauge) {
   const figuresFit = !figures || figures.scrollHeight <= figures.clientHeight + 1;
   return figuresFit && gauge.scrollHeight <= gauge.clientHeight + 1;
 }
+function fitExtras(content) {
+  const extras = content.querySelector(".extras");
+  if (!extras) {
+    return;
+  }
+  extras.style.height = getComputedStyle(extras).height;
+  extras.classList.remove("stacked");
+  const texts = [...extras.querySelectorAll(".extra .label, .extra .amount")];
+  extras.classList.toggle(
+    "stacked",
+    texts.some((text) => text.scrollWidth > text.clientWidth)
+  );
+  extras.style.height = "";
+}
 function fitCard(content) {
   const gauge = content.querySelector(".gauge");
   content.classList.remove(...OPTIONAL_PARTS.map((part) => `hide-${part}`));
   gauge?.classList.remove("short");
+  fitExtras(content);
   for (const part of OPTIONAL_PARTS) {
     const fits = content.scrollHeight <= content.clientHeight + 1;
     if (fits && (!gauge || labelledFits(gauge))) {
@@ -1622,7 +1634,7 @@ var CompactRainGaugeCard = class extends i4 {
       () => this.config,
       (gesture) => this.act(gesture)
     );
-    /** Fits the card again whenever its height, or the gauge's, changes. */
+    /** Fits the card again whenever its size, or the gauge's, changes: its width lays out the totals, its height the parts. */
     this.resizer = typeof ResizeObserver === "undefined" ? void 0 : new ResizeObserver(() => {
       const content = this.renderRoot.querySelector(".content");
       if (content) {
@@ -1695,6 +1707,10 @@ var CompactRainGaugeCard = class extends i4 {
       this.resizer?.disconnect();
       watched.forEach((element) => this.resizer?.observe(element));
       this.observed = watched;
+    }
+    const content = this.renderRoot.querySelector(".content");
+    if (content) {
+      fitCard(content);
     }
     if (this.isStale()) {
       void this.refresh();
@@ -2231,15 +2247,37 @@ var CompactRainGaugeCard = class extends i4 {
                 border-left: 1px solid var(--divider-color, rgba(127, 127, 127, 0.3));
             }
 
+            /* Each on one line, so that fitExtras() can tell when a total doesn't fit its column. */
             .extra .label {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
                 font-size: 11px;
             }
 
-            /* An amount is never cut short: in a narrow column its unit wraps under the number. */
+            /* An amount is never cut short: when one doesn't fit its column, the totals go one to a row. */
             .extra .amount {
+                overflow: hidden;
+                white-space: nowrap;
                 font-size: 13px;
                 font-weight: 500;
                 color: var(--primary-text-color);
+            }
+
+            /* One to a row, the name left and the amount right. */
+            .extras.stacked {
+                grid-auto-flow: row;
+            }
+            .extras.stacked .extra {
+                flex-direction: row;
+                justify-content: space-between;
+                gap: 8px;
+            }
+            .extras.stacked .extra + .extra::before {
+                display: none;
+            }
+            .extras.stacked .amount {
+                flex: none;
             }
 
             .chart {
@@ -2269,30 +2307,6 @@ var CompactRainGaugeCard = class extends i4 {
                 }
                 .total .brief {
                     display: inline;
-                }
-            }
-
-            /* Too narrow for the totals side by side: one a row, the name left and the amount right. */
-            @container gauge (max-width: 299px) {
-                .extras {
-                    grid-auto-flow: row;
-                }
-                .extra {
-                    flex-direction: row;
-                    justify-content: space-between;
-                    gap: 8px;
-                }
-                .extra + .extra::before {
-                    display: none;
-                }
-                .extra .label {
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                }
-                .extra .amount {
-                    flex: none;
-                    white-space: nowrap;
                 }
             }
 
@@ -2365,7 +2379,7 @@ var CompactRainGaugeCard = class extends i4 {
                     padding-left: 6px;
                     padding-right: 6px;
                 }
-                .extra {
+                .extras.stacked .extra {
                     gap: 4px;
                 }
                 .extra .amount {
@@ -2474,5 +2488,6 @@ export {
   CompactRainGaugeCard,
   REFRESH_INTERVAL,
   amountText,
-  fitCard
+  fitCard,
+  fitExtras
 };
