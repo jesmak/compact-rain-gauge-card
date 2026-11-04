@@ -460,6 +460,44 @@ describe("what the recorder adds", () => {
         }
     });
 
+    it("asks again for a new day at most once a minute, even while the recorder keeps failing", async () => {
+        vi.useFakeTimers({ toFake: ["Date"] });
+        try {
+            vi.setSystemTime(new Date(2026, 8, 22, 23, 59, 30));
+            const state = hass("10", "0", "en", { days: [10, 4] });
+            const element = await card(state, { show_yesterday: true });
+            await settled(element);
+            let asked = 0;
+            state.callWS = () => {
+                asked++;
+                return Promise.reject(new Error("recorder down"));
+            };
+            const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+            const rain = async (amount: string) => {
+                const next = hass(amount, "0", "en");
+                next.callWS = state.callWS;
+                element.hass = next;
+                await settled(element);
+            };
+            try {
+                // Past midnight, but within a minute of the last ask.
+                vi.setSystemTime(new Date(2026, 8, 23, 0, 0, 10));
+                await rain("11");
+                expect(asked).toBe(0);
+                // A minute on, once, and not again on every new reading.
+                vi.setSystemTime(new Date(2026, 8, 23, 0, 0, 40));
+                for (const amount of ["12", "13", "14"]) {
+                    await rain(amount);
+                }
+                expect(asked).toBe(1);
+            } finally {
+                warn.mockRestore();
+            }
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
     it("doesn't take a press on a chart for holding the card", async () => {
         const element = await card(hass("10", "0", "en", { days: [10, 4] }), {
             show_daily_chart: true,
@@ -604,6 +642,17 @@ describe("the narrowest card", () => {
         widths(tight.gauge, 76);
         fitCard(tight.content);
         expect([...tight.gauge.classList]).toEqual(["gauge", "short", "no-drop"]);
+
+        // Measured with the drop shown every time, or the figures fit without it and the drop comes back next time.
+        const again = layout({ card: 56, content: () => 56, figures: () => 44 });
+        Object.defineProperty(again.gauge, "clientWidth", { get: () => 70, configurable: true });
+        Object.defineProperty(again.gauge, "scrollWidth", {
+            get: () => (again.gauge.classList.contains("no-drop") ? 54 : 76),
+            configurable: true,
+        });
+        fitCard(again.content);
+        fitCard(again.content);
+        expect(again.gauge.classList.contains("no-drop")).toBe(true);
 
         const roomy = layout({ card: 56, content: () => 56, figures: () => 44 });
         widths(roomy.gauge, 70);

@@ -56,10 +56,19 @@ registry.customCards.push({
 
 /** How often the recorder is asked again. Hourly statistics change once an hour. */
 const REFRESH_INTERVAL = 15 * 60_000;
+const DAY_RECHECK = 60_000;
 /** The parts under the drop, in the order they are left out when the card is too low for them. */
 const OPTIONAL_PARTS = ["rate-chart", "daily-chart", "extras"];
 
 let instances = 0;
+
+/**
+ * A figure with ordinary spaces for the no-break ones Home Assistant and Intl put before a unit, so the narrowest card
+ * can put the unit on a line of its own. Everywhere else the figures don't wrap anyway.
+ */
+function breakable(text: string): string {
+    return text.replace(/[\u00a0\u202f]/g, " ");
+}
 
 /** Whether the gauge has the height its labelled figures need. */
 function labelledFits(gauge: HTMLElement): boolean {
@@ -231,13 +240,17 @@ export class CompactRainGaugeCard extends LitElement {
         }
     }
 
-    /** Whether the recorder is to be asked again: never asked, asked too long ago, or the day has changed since. */
+    /**
+     * Whether the recorder is to be asked again: never asked, asked too long ago, or the day has changed since. The
+     * day is checked at most once a minute, as a failed read keeps yesterday's days, and every render would ask again.
+     */
     private isStale(): boolean {
-        if (this.fetchedAt === 0 || Date.now() - this.fetchedAt >= REFRESH_INTERVAL) {
+        const since = Date.now() - this.fetchedAt;
+        if (this.fetchedAt === 0 || since >= REFRESH_INTERVAL) {
             return true;
         }
         const last = this.days?.[this.days.length - 1];
-        return last !== undefined && last.day !== this.today();
+        return since >= DAY_RECHECK && last !== undefined && last.day !== this.today();
     }
 
     private today(): string {
@@ -344,14 +357,14 @@ export class CompactRainGaugeCard extends LitElement {
         const days = this.liveDays(entity);
         const maxLevel = maxLevelOf(config, unit);
         const fill = fillOf(valueOf(entity), maxLevel);
-        const total = formatReading(this.hass, entity, unit, language);
+        const total = breakable(formatReading(this.hass, entity, unit, language));
         const label = this.text("common.total");
 
         const rateId = config.hourly_rate_entity;
         const rateEntity = rateId ? this.hass.states[rateId] : undefined;
         const rateUnit = unitOf(rateEntity, config);
         const rateValue = valueOf(rateEntity);
-        const rate = rateId ? formatReading(this.hass, rateEntity, rateUnit, language, true) : undefined;
+        const rate = rateId ? breakable(formatReading(this.hass, rateEntity, rateUnit, language, true)) : undefined;
         const raining = rateValue !== null && rateValue > 0;
         const intensity = intensityOf(rateValue, rateUnit);
         const intensityText = this.text(`intensity.${intensity}`);
@@ -399,7 +412,9 @@ export class CompactRainGaugeCard extends LitElement {
                                     : html`<div class="figure rate">
                                           <span class="label">${this.text("common.rate")}</span>
                                           <span class="value"
-                                              >${rate}${showIntensity ? this.intensity(intensity, intensityText) : nothing}</span
+                                              >${rate}${
+                                                  showIntensity ? html`<wbr />${this.intensity(intensity, intensityText)}` : nothing
+                                              }</span
                                           >
                                       </div>`
                             }
@@ -919,7 +934,7 @@ export class CompactRainGaugeCard extends LitElement {
                 .brief {
                     display: inline;
                 }
-                /* A figure is never cut short: one too wide for the narrowest card puts its unit on a line of its own. */
+                /* A figure is never cut short: one too wide for the narrowest card puts its unit, then its bars, on a line of their own. */
                 .value {
                     font-size: 14px;
                     line-height: 18px;

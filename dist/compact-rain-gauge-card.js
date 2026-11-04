@@ -1586,8 +1586,12 @@ registry.customCards.push({
   preview: true
 });
 var REFRESH_INTERVAL = 15 * 6e4;
+var DAY_RECHECK = 6e4;
 var OPTIONAL_PARTS = ["rate-chart", "daily-chart", "extras"];
 var instances = 0;
+function breakable(text) {
+  return text.replace(/[\u00a0\u202f]/g, " ");
+}
 function labelledFits(gauge) {
   const figures = gauge.querySelector(".figures");
   const figuresFit = !figures || figures.scrollHeight <= figures.clientHeight + 1;
@@ -1719,13 +1723,17 @@ var CompactRainGaugeCard = class extends i4 {
       void this.refresh();
     }
   }
-  /** Whether the recorder is to be asked again: never asked, asked too long ago, or the day has changed since. */
+  /**
+   * Whether the recorder is to be asked again: never asked, asked too long ago, or the day has changed since. The
+   * day is checked at most once a minute, as a failed read keeps yesterday's days, and every render would ask again.
+   */
   isStale() {
-    if (this.fetchedAt === 0 || Date.now() - this.fetchedAt >= REFRESH_INTERVAL) {
+    const since = Date.now() - this.fetchedAt;
+    if (this.fetchedAt === 0 || since >= REFRESH_INTERVAL) {
       return true;
     }
     const last = this.days?.[this.days.length - 1];
-    return last !== void 0 && last.day !== this.today();
+    return since >= DAY_RECHECK && last !== void 0 && last.day !== this.today();
   }
   today() {
     return dayFormatter(this.hass?.config?.time_zone)(Date.now());
@@ -1819,13 +1827,13 @@ var CompactRainGaugeCard = class extends i4 {
     const days = this.liveDays(entity);
     const maxLevel = maxLevelOf(config, unit);
     const fill = fillOf(valueOf(entity), maxLevel);
-    const total = formatReading(this.hass, entity, unit, language);
+    const total = breakable(formatReading(this.hass, entity, unit, language));
     const label = this.text("common.total");
     const rateId = config.hourly_rate_entity;
     const rateEntity = rateId ? this.hass.states[rateId] : void 0;
     const rateUnit = unitOf(rateEntity, config);
     const rateValue = valueOf(rateEntity);
-    const rate = rateId ? formatReading(this.hass, rateEntity, rateUnit, language, true) : void 0;
+    const rate = rateId ? breakable(formatReading(this.hass, rateEntity, rateUnit, language, true)) : void 0;
     const raining = rateValue !== null && rateValue > 0;
     const intensity = intensityOf(rateValue, rateUnit);
     const intensityText = this.text(`intensity.${intensity}`);
@@ -1867,7 +1875,7 @@ var CompactRainGaugeCard = class extends i4 {
                             ${rate === void 0 ? A : b2`<div class="figure rate">
                                           <span class="label">${this.text("common.rate")}</span>
                                           <span class="value"
-                                              >${rate}${showIntensity ? this.intensity(intensity, intensityText) : A}</span
+                                              >${rate}${showIntensity ? b2`<wbr />${this.intensity(intensity, intensityText)}` : A}</span
                                           >
                                       </div>`}
                         </div>
@@ -2370,7 +2378,7 @@ var CompactRainGaugeCard = class extends i4 {
                 .brief {
                     display: inline;
                 }
-                /* A figure is never cut short: one too wide for the narrowest card puts its unit on a line of its own. */
+                /* A figure is never cut short: one too wide for the narrowest card puts its unit, then its bars, on a line of their own. */
                 .value {
                     font-size: 14px;
                     line-height: 18px;
