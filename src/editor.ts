@@ -39,7 +39,7 @@ function languageName(code: string, viewer: string): string {
     }
 }
 
-export function schema(viewer: string) {
+function schema(viewer: string) {
     const sensor = { entity: { domain: "sensor" } };
     const toggle = (name: string) => ({ name, selector: { boolean: {} } });
     return [
@@ -122,7 +122,7 @@ export function formData(config: CompactRainGaugeCardConfig): FormData {
 }
 
 /** The configuration for what the form holds: short, without defaults or emptied options. */
-export function configOf(data: FormData): CompactRainGaugeCardConfig {
+function configOf(data: FormData): CompactRainGaugeCardConfig {
     const config = { ...data } as CompactRainGaugeCardConfig;
     for (const key of OPTIONAL) {
         const value = config[key];

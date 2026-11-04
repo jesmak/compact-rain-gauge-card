@@ -30,6 +30,13 @@ describe("the intensity", () => {
         expect(intensityOf(60, "mm/h")).toBe("violent");
     });
 
+    it("puts a rate right at a limit in the step above it", () => {
+        expect(intensityOf(2.5, "mm/h")).toBe("moderate");
+        expect(intensityOf(7.6, "mm/h")).toBe("heavy");
+        expect(intensityOf(50, "mm/h")).toBe("violent");
+        expect(intensityOf(2.49, "mm/h")).toBe("light");
+    });
+
     it("turns inches and other periods into millimetres an hour", () => {
         expect(intensityOf(0.2, "in/h")).toBe("moderate");
         expect(intensityOf(0.1, "mm/min")).toBe("moderate");

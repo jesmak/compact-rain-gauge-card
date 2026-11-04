@@ -157,7 +157,7 @@ describe("the gauge", () => {
         const labels = [...root(element).querySelectorAll(".figure .label")].map(
             (node) => node.querySelector(".long")?.textContent ?? node.textContent,
         );
-        expect(labels).toEqual(["Kokonaiskertymä", "Sademäärä"]);
+        expect(labels).toEqual(["Kokonaiskertymä", "Voimakkuus"]);
         expect(root(element).querySelector(".total .brief")?.textContent).toBe("Kertymä");
         const style = root(element).querySelector("ha-card")?.getAttribute("style");
         expect(style).toContain("--rain-gauge-fill-color: teal");
@@ -236,9 +236,13 @@ describe("the size of the card", () => {
     });
 
     it("leaves out the rate chart first, then the daily one, then the extra totals, until the rest fits", () => {
-        const { content } = layout({ card: 200, content: () => 300 - hidden() * 60 });
-        fitCard(content);
-        expect([...content.classList]).toEqual(["hide-rate-chart", "hide-daily-chart"]);
+        const charts = layout({ card: 200, content: () => 300 - hidden() * 60 }).content;
+        fitCard(charts);
+        expect([...charts.classList]).toEqual(["hide-rate-chart", "hide-daily-chart"]);
+
+        const everything = layout({ card: 200, content: () => 300 - hidden() * 40 }).content;
+        fitCard(everything);
+        expect([...everything.classList]).toEqual(["hide-rate-chart", "hide-daily-chart", "hide-extras"]);
     });
 
     it("leaves out a part rather than squeeze the drop out of its labels", () => {
@@ -306,13 +310,6 @@ describe("the size of the card", () => {
         fitCard(long.content);
         expect(long.extras.classList.contains("stacked")).toBe(true);
         expect(long.extras.style.height).toBe("");
-    });
-
-    it("measures its own width, so its layout follows the space it is given", async () => {
-        const styles = (customElements.get("compact-rain-gauge-card") as unknown as { styles: { cssText: string } }).styles.cssText;
-        expect(styles).toContain("container: gauge / inline-size");
-        expect(styles).toMatch(/@container gauge \(max-width: 179px\)/);
-        expect(styles).toMatch(/@container gauge \(min-width: 260px\)/);
     });
 });
 
@@ -447,6 +444,22 @@ describe("what the recorder adds", () => {
         expect(root(element).querySelector(".extra .amount")?.textContent).toBe("4 mm");
     });
 
+    it("keeps what it shows when the recorder fails, and says so in the console", async () => {
+        const state = hass("10", "0", "en", { days: [10, 4] });
+        const element = await card(state, { show_yesterday: true });
+        await settled(element);
+        const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+        try {
+            state.callWS = () => Promise.reject(new Error("recorder down"));
+            await (element as unknown as { refresh(): Promise<void> }).refresh();
+            await settled(element);
+            expect(root(element).querySelector(".extra .amount")?.textContent).toBe("4 mm");
+            expect(warn).toHaveBeenCalledOnce();
+        } finally {
+            warn.mockRestore();
+        }
+    });
+
     it("doesn't take a press on a chart for holding the card", async () => {
         const element = await card(hass("10", "0", "en", { days: [10, 4] }), {
             show_daily_chart: true,
@@ -501,8 +514,10 @@ describe("what the recorder adds", () => {
         };
         expect(daily.items).toHaveLength(7);
         expect(daily.heading).toBe("Rain, last 7 days");
-        // The reading from 30 hours ago still holds when the 12 hours start; the live state comes last.
-        expect(rate.items.length).toBeGreaterThanOrEqual(2);
+        // The reading from 30 hours ago still holds when the 12 hours start, so the line starts with it there.
+        const line = rate as unknown as { items: Array<{ time: number; value: number }>; start: number };
+        expect(line.items.map((item) => item.value)).toEqual([1, 0.4]);
+        expect(line.items[0].time).toBe(line.start);
         expect(rate.heading).toBe("Rain rate, last 12 h");
     });
 });
@@ -580,6 +595,27 @@ describe("the charts' floors", () => {
 });
 
 describe("the narrowest card", () => {
+    it("leaves the drop out when low and even the small one leaves the figures too little room", () => {
+        const widths = (gauge: HTMLElement, needed: number) => {
+            Object.defineProperty(gauge, "clientWidth", { get: () => 70, configurable: true });
+            Object.defineProperty(gauge, "scrollWidth", { get: () => needed, configurable: true });
+        };
+        const tight = layout({ card: 56, content: () => 56, figures: () => 44 });
+        widths(tight.gauge, 76);
+        fitCard(tight.content);
+        expect([...tight.gauge.classList]).toEqual(["gauge", "short", "no-drop"]);
+
+        const roomy = layout({ card: 56, content: () => 56, figures: () => 44 });
+        widths(roomy.gauge, 70);
+        fitCard(roomy.content);
+        expect([...roomy.gauge.classList]).toEqual(["gauge", "short"]);
+
+        const tall = layout({ card: 200, content: () => 200 });
+        widths(tall.gauge, 76);
+        fitCard(tall.content);
+        expect(tall.gauge.classList.contains("no-drop")).toBe(false);
+    });
+
     it("has short names for the totals and the charts beside the long ones", async () => {
         const element = await card(hass("10", "0", "fi", { days: [1, 2, 3, 4, 5, 6, 7, 8] }), {
             hourly_rate_entity: RATE,

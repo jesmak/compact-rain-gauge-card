@@ -55,7 +55,7 @@ registry.customCards.push({
 });
 
 /** How often the recorder is asked again. Hourly statistics change once an hour. */
-export const REFRESH_INTERVAL = 15 * 60_000;
+const REFRESH_INTERVAL = 15 * 60_000;
 /** The parts under the drop, in the order they are left out when the card is too low for them. */
 const OPTIONAL_PARTS = ["rate-chart", "daily-chart", "extras"];
 
@@ -72,7 +72,7 @@ function labelledFits(gauge: HTMLElement): boolean {
  * Puts the totals one to a row when side by side any of them doesn't fit its column, its name and its amount each
  * on one line. They are held to their drawn height while they are measured, so the card doesn't change height.
  */
-export function fitExtras(content: HTMLElement): void {
+function fitExtras(content: HTMLElement): void {
     const extras = content.querySelector<HTMLElement>(".extras");
     if (!extras) {
         return;
@@ -97,7 +97,7 @@ export function fitExtras(content: HTMLElement): void {
 export function fitCard(content: HTMLElement): void {
     const gauge = content.querySelector<HTMLElement>(".gauge");
     content.classList.remove(...OPTIONAL_PARTS.map((part) => `hide-${part}`));
-    gauge?.classList.remove("short");
+    gauge?.classList.remove("short", "no-drop");
     fitExtras(content);
     for (const part of OPTIONAL_PARTS) {
         const fits = content.scrollHeight <= content.clientHeight + 1;
@@ -113,6 +113,8 @@ export function fitCard(content: HTMLElement): void {
     const style = getComputedStyle(gauge);
     const height = gauge.clientHeight - (parseFloat(style.paddingTop) || 0) - (parseFloat(style.paddingBottom) || 0);
     gauge.style.setProperty("--drop-width", `${Math.max(Math.round((height * DROP_WIDTH) / DROP_HEIGHT), 0)}px`);
+    // Low and narrow, even the smallest drop can leave the figures too little room. Then they take the gauge alone.
+    gauge.classList.toggle("no-drop", gauge.classList.contains("short") && gauge.scrollWidth > gauge.clientWidth + 1);
 }
 
 @customElement("compact-rain-gauge-card")
@@ -256,11 +258,16 @@ export class CompactRainGaugeCard extends LitElement {
         const rateId = config.hourly_rate_entity;
         const wantsRates = !!rateId && option(config, "show_rate_chart");
         const count = this.daysNeeded();
-        const quietly = <T>(promise: Promise<T>) => promise.catch(() => undefined);
+        // A failed read keeps what is already shown until the next one, rather than blanking it for 15 minutes.
+        const orShown = <T>(promise: Promise<T>, shown: T | undefined) =>
+            promise.catch((error: unknown) => {
+                console.warn("compact-rain-gauge-card: could not read the recorder", error);
+                return shown;
+            });
         try {
             const [days, rates] = await Promise.all([
-                count > 0 ? quietly(fetchDays(hass, entity, count, now)) : undefined,
-                wantsRates ? quietly(fetchRate(hass, rateId, this.rateHours(), now)) : undefined,
+                count > 0 ? orShown(fetchDays(hass, entity, count, now), this.days) : undefined,
+                wantsRates ? orShown(fetchRate(hass, rateId, this.rateHours(), now), this.rates) : undefined,
             ]);
             if (config === this.config) {
                 this.days = days;
@@ -758,12 +765,13 @@ export class CompactRainGaugeCard extends LitElement {
 
             /*
              * The parts under the drop are tiles of their own, as the packages are in package-tracker-card: the
-             * totals, and each chart with its heading under it.
+             * totals, and each chart with its heading under it. The gap under each is 10 px at every width, so they are
+             * evenly spaced down to the card's edge, and a chart of 54 px takes exactly the 64 px row it asks for.
              */
             .extras,
             .chart {
                 flex: none;
-                margin: 0 10px 8px;
+                margin: 0 10px 10px;
                 padding: 6px 10px;
                 border-radius: 8px;
                 background: var(--secondary-background-color, rgba(127, 127, 127, 0.1));
@@ -911,9 +919,12 @@ export class CompactRainGaugeCard extends LitElement {
                 .brief {
                     display: inline;
                 }
+                /* A figure is never cut short: one too wide for the narrowest card puts its unit on a line of its own. */
                 .value {
                     font-size: 14px;
                     line-height: 18px;
+                    white-space: normal;
+                    text-align: center;
                 }
                 .rate .value {
                     font-size: 12px;
@@ -923,7 +934,7 @@ export class CompactRainGaugeCard extends LitElement {
                 }
                 .extras,
                 .chart {
-                    margin: 0 4px 4px;
+                    margin: 0 4px 10px;
                     padding-left: 6px;
                     padding-right: 6px;
                 }
@@ -954,6 +965,9 @@ export class CompactRainGaugeCard extends LitElement {
             .gauge.short .figures {
                 align-items: stretch;
                 gap: 0;
+            }
+            .gauge.no-drop .drop {
+                display: none;
             }
             .gauge.short .figure {
                 align-items: flex-start;
@@ -995,14 +1009,6 @@ export class CompactRainGaugeCard extends LitElement {
                 .falling {
                     animation: none;
                 }
-            }
-
-            /* The same gap under every part at every width, so the totals and the charts are evenly spaced down to the card's
-               edge. A chart is 54 px, so with its gap it takes exactly the 64 px row it asks for. A chart and a gap taller
-               than that left a wide card without the totals a few pixels short, and the fitting left the chart out. */
-            .content .extras,
-            .content .chart {
-                margin-bottom: 10px;
             }
         `;
     }

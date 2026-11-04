@@ -1,6 +1,6 @@
 /**
  * How hard it is raining, by the rate in millimetres an hour, in the steps meteorologists use: light below
- * 2.5 mm/h, moderate below 7.6 mm/h, heavy below 50 mm/h and violent above that.
+ * 2.5 mm/h, moderate below 7.6 mm/h, heavy below 50 mm/h and violent from there on.
  */
 import { MM_PER_INCH } from "./const";
 import { isInches } from "./gauge";
@@ -24,7 +24,7 @@ export function intensityOf(rate: number | null, unit: string): Intensity {
     }
     const perHour = rate * hourlyFactor(unit);
     const mm = isInches(unit) ? perHour * MM_PER_INCH : perHour;
-    return STEPS.find(([floor]) => mm > floor)?.[1] ?? "light";
+    return STEPS.find(([floor]) => mm >= floor)?.[1] ?? "light";
 }
 
 /** The least the rate chart's top stands for: 1 mm or 0.05 in an hour, in the sensor's own unit. */

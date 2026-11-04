@@ -8,7 +8,7 @@
         "invalid_daily_chart_days": "Pylväiden päivien määrän on oltava luku",
         "no_entity": "Sensoria ei löydy:",
         "total": "Kokonaiskertymä",
-        "rate": "Sademäärä",
+        "rate": "Voimakkuus",
         "yesterday": "Eilen",
         "week": "7 päivää",
         "month": "30 päivää",

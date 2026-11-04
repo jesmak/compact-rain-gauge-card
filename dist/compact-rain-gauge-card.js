@@ -1219,7 +1219,7 @@ var fi_default = {
     invalid_daily_chart_days: "Pylv\xE4iden p\xE4ivien m\xE4\xE4r\xE4n on oltava luku",
     no_entity: "Sensoria ei l\xF6ydy:",
     total: "Kokonaiskertym\xE4",
-    rate: "Sadem\xE4\xE4r\xE4",
+    rate: "Voimakkuus",
     yesterday: "Eilen",
     week: "7 p\xE4iv\xE4\xE4",
     month: "30 p\xE4iv\xE4\xE4",
@@ -1557,7 +1557,7 @@ function intensityOf(rate, unit) {
   }
   const perHour = rate * hourlyFactor(unit);
   const mm = isInches(unit) ? perHour * MM_PER_INCH : perHour;
-  return STEPS.find(([floor]) => mm > floor)?.[1] ?? "light";
+  return STEPS.find(([floor]) => mm >= floor)?.[1] ?? "light";
 }
 function rateFloor(unit) {
   return (isInches(unit) ? 0.05 : 1) / hourlyFactor(unit);
@@ -1610,7 +1610,7 @@ function fitExtras(content) {
 function fitCard(content) {
   const gauge = content.querySelector(".gauge");
   content.classList.remove(...OPTIONAL_PARTS.map((part) => `hide-${part}`));
-  gauge?.classList.remove("short");
+  gauge?.classList.remove("short", "no-drop");
   fitExtras(content);
   for (const part of OPTIONAL_PARTS) {
     const fits = content.scrollHeight <= content.clientHeight + 1;
@@ -1626,6 +1626,7 @@ function fitCard(content) {
   const style = getComputedStyle(gauge);
   const height = gauge.clientHeight - (parseFloat(style.paddingTop) || 0) - (parseFloat(style.paddingBottom) || 0);
   gauge.style.setProperty("--drop-width", `${Math.max(Math.round(height * DROP_WIDTH / DROP_HEIGHT), 0)}px`);
+  gauge.classList.toggle("no-drop", gauge.classList.contains("short") && gauge.scrollWidth > gauge.clientWidth + 1);
 }
 var CompactRainGaugeCard = class extends i4 {
   constructor() {
@@ -1743,11 +1744,14 @@ var CompactRainGaugeCard = class extends i4 {
     const rateId = config.hourly_rate_entity;
     const wantsRates = !!rateId && option(config, "show_rate_chart");
     const count = this.daysNeeded();
-    const quietly = (promise) => promise.catch(() => void 0);
+    const orShown = (promise, shown) => promise.catch((error) => {
+      console.warn("compact-rain-gauge-card: could not read the recorder", error);
+      return shown;
+    });
     try {
       const [days, rates] = await Promise.all([
-        count > 0 ? quietly(fetchDays(hass, entity, count, now)) : void 0,
-        wantsRates ? quietly(fetchRate(hass, rateId, this.rateHours(), now)) : void 0
+        count > 0 ? orShown(fetchDays(hass, entity, count, now), this.days) : void 0,
+        wantsRates ? orShown(fetchRate(hass, rateId, this.rateHours(), now), this.rates) : void 0
       ]);
       if (config === this.config) {
         this.days = days;
@@ -2212,12 +2216,13 @@ var CompactRainGaugeCard = class extends i4 {
 
             /*
              * The parts under the drop are tiles of their own, as the packages are in package-tracker-card: the
-             * totals, and each chart with its heading under it.
+             * totals, and each chart with its heading under it. The gap under each is 10 px at every width, so they are
+             * evenly spaced down to the card's edge, and a chart of 54 px takes exactly the 64 px row it asks for.
              */
             .extras,
             .chart {
                 flex: none;
-                margin: 0 10px 8px;
+                margin: 0 10px 10px;
                 padding: 6px 10px;
                 border-radius: 8px;
                 background: var(--secondary-background-color, rgba(127, 127, 127, 0.1));
@@ -2365,9 +2370,12 @@ var CompactRainGaugeCard = class extends i4 {
                 .brief {
                     display: inline;
                 }
+                /* A figure is never cut short: one too wide for the narrowest card puts its unit on a line of its own. */
                 .value {
                     font-size: 14px;
                     line-height: 18px;
+                    white-space: normal;
+                    text-align: center;
                 }
                 .rate .value {
                     font-size: 12px;
@@ -2377,7 +2385,7 @@ var CompactRainGaugeCard = class extends i4 {
                 }
                 .extras,
                 .chart {
-                    margin: 0 4px 4px;
+                    margin: 0 4px 10px;
                     padding-left: 6px;
                     padding-right: 6px;
                 }
@@ -2408,6 +2416,9 @@ var CompactRainGaugeCard = class extends i4 {
             .gauge.short .figures {
                 align-items: stretch;
                 gap: 0;
+            }
+            .gauge.no-drop .drop {
+                display: none;
             }
             .gauge.short .figure {
                 align-items: flex-start;
@@ -2450,14 +2461,6 @@ var CompactRainGaugeCard = class extends i4 {
                     animation: none;
                 }
             }
-
-            /* The same gap under every part at every width, so the totals and the charts are evenly spaced down to the card's
-               edge. A chart is 54 px, so with its gap it takes exactly the 64 px row it asks for. A chart and a gap taller
-               than that left a wide card without the totals a few pixels short, and the fitting left the chart out. */
-            .content .extras,
-            .content .chart {
-                margin-bottom: 10px;
-            }
         `;
   }
 };
@@ -2488,8 +2491,6 @@ function amountText(amount, unit, language) {
 }
 export {
   CompactRainGaugeCard,
-  REFRESH_INTERVAL,
   amountText,
-  fitCard,
-  fitExtras
+  fitCard
 };
