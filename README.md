@@ -2,7 +2,7 @@
 
 Home Assistant dashboard card that shows the day's rain as a filling drop, at any size a dashboard gives it.
 
-[![GitHub Release][releases-shield]][releases] [![GitHub Release Date][release-date-shield]][releases] [![Marketplace][marketplace-shield]][marketplace] [![License][license-shield]](LICENSE)
+[![GitHub Release][releases-shield]][releases] [![GitHub Release Date][release-date-shield]][releases] [![Downloads][downloads-shield]][releases] [![Marketplace][marketplace-shield]][marketplace] [![License][license-shield]](LICENSE)
 
 <p>
 <img src="https://raw.githubusercontent.com/jesmak/compact-rain-gauge-card/main/docs/images/everything-light.png#gh-light-mode-only" width="400" alt="The drop a quarter full beside today's 8.6 mm and a rate of 3.2 mm/h with two of three intensity bars, then yesterday's, the past week's and the past month's rain, and bars of the last 14 days against a dashed line at 5 mm">
@@ -207,6 +207,7 @@ MIT, see [LICENSE](LICENSE).
 [releases-shield]: https://img.shields.io/github/release/jesmak/compact-rain-gauge-card.svg?style=for-the-badge
 [release-date-shield]: https://img.shields.io/github/release-date/jesmak/compact-rain-gauge-card?style=for-the-badge
 [releases]: https://github.com/jesmak/compact-rain-gauge-card/releases
+[downloads-shield]: https://img.shields.io/github/downloads/jesmak/compact-rain-gauge-card/total.svg?style=for-the-badge
 [marketplace-shield]: https://img.shields.io/badge/Marketplace-Default-green.svg?style=for-the-badge
 [marketplace]: https://my.home-assistant.io/redirect/marketplace_repository/?owner=jesmak&repository=compact-rain-gauge-card&category=plugin
 [license-shield]: https://img.shields.io/github/license/jesmak/compact-rain-gauge-card.svg?style=for-the-badge
