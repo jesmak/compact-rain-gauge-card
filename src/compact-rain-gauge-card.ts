@@ -170,11 +170,12 @@ export class CompactRainGaugeCard extends LitElement {
     }
 
     public setConfig(config: CompactRainGaugeCardConfig): void {
-        if (!config || typeof config.entity !== "string" || config.entity === "") {
+        // No entity is the picker's stub when there is no rain sensor yet, and the card says so.
+        if (!config || (config.entity != null && typeof config.entity !== "string")) {
             throw new Error(translate(browserLanguage(), "common.invalid_configuration"));
         }
         checkNumbers(config);
-        this.config = { ...config };
+        this.config = { ...config, entity: config.entity ?? "" };
         this.days = undefined;
         this.rates = undefined;
         this.fetchedAt = 0;
@@ -347,6 +348,9 @@ export class CompactRainGaugeCard extends LitElement {
             return nothing;
         }
         const config = this.config;
+        if (!config.entity) {
+            return html`<ha-card><div class="missing">${this.text("common.no_sensor")}</div></ha-card>`;
+        }
         const entity = this.hass.states[config.entity];
         if (!entity) {
             return html`<ha-card><div class="missing">${this.text("common.no_entity")} ${config.entity}</div></ha-card>`;

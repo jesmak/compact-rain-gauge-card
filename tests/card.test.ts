@@ -176,9 +176,24 @@ describe("the gauge", () => {
         expect(id(one)).not.toEqual(id(other));
     });
 
-    it("refuses a configuration without a sensor", () => {
+    it("shows its picker stub with no rain sensor as a hint, and asks for no history", async () => {
+        const state = { ...hass(), states: {} };
+        const calls = vi.fn();
+        state.callWS = async <T>(message: Record<string, unknown>) => (calls(message), undefined as T);
+        const stub = (customElements.get("compact-rain-gauge-card") as unknown as typeof CompactRainGaugeCard).getStubConfig(state);
+        expect(stub).toEqual({});
         const element = document.createElement("compact-rain-gauge-card") as CompactRainGaugeCard;
-        expect(() => element.setConfig({ type: "custom:compact-rain-gauge-card" } as never)).toThrow();
+        element.setConfig({ type: "custom:compact-rain-gauge-card", ...stub } as never);
+        element.hass = state;
+        document.body.append(element);
+        await settled(element);
+        expect(root(element).querySelector(".missing")?.textContent?.trim()).toBe("No rain sensor yet. Choose one in the card's settings.");
+        expect(calls).not.toHaveBeenCalled();
+    });
+
+    it("refuses a sensor that isn't an entity id", () => {
+        const element = document.createElement("compact-rain-gauge-card") as CompactRainGaugeCard;
+        expect(() => element.setConfig({ type: "custom:compact-rain-gauge-card", entity: [RAIN] } as never)).toThrow();
     });
 
     it("refuses a full drop that isn't a number, as the editor does", () => {
