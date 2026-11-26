@@ -159,7 +159,7 @@ The card asks for the history when it is shown and every 15 minutes after that, 
 
 The card's texts are in `src/localize/languages/`, one JSON file per language, named by its language code, such as
 `en.json`, `fi.json` and `pt-br.json` (Brazilian Portuguese). To add a language, copy `en.json` to the new language's
-code, such as `sv.json`, and translate the values. A file may name a region, such as `pt-br.json`; it is used for
+code, such as `sv.json`, and translate the values. A file may name a region, such as `pt-br.json`. It is used for
 `pt-BR`, falling back to a file for the language alone (`pt.json`), and then to English. Nothing else needs changing.
 The card finds the file by itself, offers it in the editor, and uses it when Home Assistant is set to that language. A
 text left out falls back to English. Texts ending in `_short` are what the narrowest cards show in place of the longer
