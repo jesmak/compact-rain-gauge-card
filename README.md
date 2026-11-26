@@ -53,7 +53,7 @@ options can also be written by hand.
 | `type`               | string  | `custom:compact-rain-gauge-card`                                          | required                  |
 | `entity`             | string  | The rain so far, such as today's total. The drop fills with it            | required                  |
 | `hourly_rate_entity` | string  | How hard it is raining now, shown under the total                         |                           |
-| `language`           | string  | The card's own language, such as `fi`                                     | Home Assistant's language |
+| `language`           | string  | The card's own language, such as `fi` or `pt-BR`                          | Home Assistant's language |
 | `max_level`          | number  | The rain that fills the drop, in the sensor's unit. Any number above zero | 40 mm, or 1.57 in         |
 | `animate_rain`       | boolean | Move the surface and let drops fall while the rate sensor says it rains   | `true`                    |
 | `show_scale`         | boolean | Marks on the drop at round values                                         | `true`                    |
@@ -137,7 +137,7 @@ The card keeps its configuration, so nothing has to change. A few things look or
 - The unit comes from the sensor, so `is_imperial` only matters for a sensor without a unit.
 - The scale marks, the intensity bars and the rain animation are on by default. Each has an option to turn it off.
 - `name` is no longer read. The label is always "Total" in the card's language.
-- The card speaks English and Finnish. With another language chosen it falls back to English. See
+- The card speaks English, Finnish and Brazilian Portuguese. With another language chosen it falls back to English. See
   [Translating](#translating) to add one.
 
 ## Data
@@ -158,10 +158,12 @@ The card asks for the history when it is shown and every 15 minutes after that, 
 ## Translating
 
 The card's texts are in `src/localize/languages/`, one JSON file per language, named by its language code, such as
-`en.json` and `fi.json`. To add a language, copy `en.json` to the new language's code, such as `sv.json`, and translate the values.
-Nothing else needs changing. The card finds the file by itself, offers it in the editor, and uses it when Home
-Assistant is set to that language. A text left out falls back to English. Texts ending in `_short` are what the
-narrowest cards show in place of the longer ones, so keep them brief.
+`en.json`, `fi.json` and `pt-br.json` (Brazilian Portuguese). To add a language, copy `en.json` to the new language's
+code, such as `sv.json`, and translate the values. A file may name a region, such as `pt-br.json`; it is used for
+`pt-BR`, falling back to a file for the language alone (`pt.json`), and then to English. Nothing else needs changing.
+The card finds the file by itself, offers it in the editor, and uses it when Home Assistant is set to that language. A
+text left out falls back to English. Texts ending in `_short` are what the narrowest cards show in place of the longer
+ones, so keep them brief.
 
 ## Development
 

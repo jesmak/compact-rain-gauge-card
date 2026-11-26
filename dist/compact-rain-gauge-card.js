@@ -1277,15 +1277,93 @@ var fi_default = {
   }
 };
 
+// src/localize/languages/pt-br.json
+var pt_br_default = {
+  common: {
+    name: "Pluvi\xF4metro compacto",
+    description: "A chuva do dia numa gota que vai enchendo, com a intensidade da chuva agora",
+    invalid_configuration: "Escolha um sensor de chuva para o cart\xE3o",
+    invalid_max_level: "O limite da gota cheia precisa ser um n\xFAmero maior que zero",
+    invalid_rate_chart_hours: "As horas no gr\xE1fico de intensidade precisam ser um n\xFAmero",
+    invalid_daily_chart_days: "Os dias nas barras precisam ser um n\xFAmero",
+    no_entity: "Sensor n\xE3o encontrado:",
+    no_sensor: "Nenhum sensor de chuva ainda. Escolha um nas configura\xE7\xF5es do cart\xE3o.",
+    total: "Total",
+    rate: "Intensidade",
+    yesterday: "Ontem",
+    week: "\xDAltimos 7 dias",
+    month: "\xDAltimos 30 dias",
+    daily_chart: "Chuva nos \xFAltimos {days} dias",
+    rate_chart: "Intensidade da chuva nas \xFAltimas {hours} h",
+    yesterday_short: "1 d",
+    week_short: "7 d",
+    month_short: "30 d",
+    daily_chart_short: "Chuva, {days} d",
+    rate_chart_short: "Intensidade, {hours} h",
+    total_short: "Total"
+  },
+  editor: {
+    entity: "Sensor de chuva",
+    entity_helper: "A chuva acumulada at\xE9 agora, como o total de hoje. A gota enche conforme esse valor.",
+    hourly_rate_entity: "Sensor de intensidade da chuva",
+    hourly_rate_entity_helper: "Qu\xE3o forte est\xE1 chovendo agora. Opcional.",
+    max_level: "Gota cheia",
+    max_level_helper: "A chuva que enche a gota, na unidade do sensor. Se ficar vazio, 40 mm ou 1,57 polegada.",
+    is_imperial: "Polegadas",
+    is_imperial_helper: "L\xEA um sensor sem unidade como polegadas. Se o sensor tiver unidade, ela \xE9 usada.",
+    fill_drop_colour: "Cor do preenchimento",
+    border_colour: "Cor do contorno",
+    language: "Idioma",
+    language_helper: "Se ficar vazio, usa o idioma do Home Assistant.",
+    interactions: "Intera\xE7\xF5es",
+    tap_action: "Toque",
+    hold_action: "Segurar",
+    double_tap_action: "Toque duplo",
+    display: "Exibi\xE7\xE3o",
+    animate_rain: "Anima\xE7\xE3o de chuva",
+    animate_rain_helper: "A superf\xEDcie se mexe e gotas caem enquanto o sensor de intensidade indicar chuva.",
+    show_scale: "Marca\xE7\xF5es da escala",
+    show_intensity: "Barras de intensidade",
+    show_intensity_helper: "Mostra ao lado da intensidade se a chuva \xE9 fraca, moderada ou forte.",
+    show_yesterday: "Chuva de ontem",
+    show_week: "\xDAltimos 7 dias",
+    show_month: "\xDAltimos 30 dias",
+    charts: "Gr\xE1ficos",
+    show_daily_chart: "Barras de chuva por dia",
+    daily_chart_days: "Dias nas barras",
+    show_rate_chart: "Gr\xE1fico de intensidade da chuva",
+    show_rate_chart_helper: "Precisa do sensor de intensidade da chuva.",
+    rate_chart_hours: "Horas no gr\xE1fico de intensidade",
+    rate_chart_hours_helper: "At\xE9 168, ou seja, uma semana. Por padr\xE3o, o recorder guarda o hist\xF3rico de intensidade por dez dias."
+  },
+  intensity: {
+    none: "N\xE3o est\xE1 chovendo",
+    light: "Chuva fraca",
+    moderate: "Chuva moderada",
+    heavy: "Chuva forte",
+    violent: "Chuva muito forte"
+  }
+};
+
 // src/localize/localize.ts
-var FILES = { "./languages/en.json": en_default, "./languages/fi.json": fi_default };
+var FILES = { "./languages/en.json": en_default, "./languages/fi.json": fi_default, "./languages/pt-br.json": pt_br_default };
 var LANGUAGES = Object.fromEntries(
   Object.entries(FILES).map(([path, table]) => [path.replace(/^.*\/|\.json$/g, "").toLowerCase(), table])
 );
 var LANGUAGE_CODES = Object.keys(LANGUAGES).sort();
 function translate(language, key) {
-  const code = (language ?? "en").split(/[-_]/)[0].toLowerCase();
-  return read(LANGUAGES[code], key) ?? read(LANGUAGES.en, key) ?? key;
+  for (const code of languageCodes(language)) {
+    const text = read(LANGUAGES[code], key);
+    if (text !== void 0) {
+      return text;
+    }
+  }
+  return read(LANGUAGES.en, key) ?? key;
+}
+function languageCodes(language) {
+  const tag = (language ?? "en").trim().toLowerCase().replace(/_/g, "-");
+  const base = tag.split("-")[0];
+  return tag === base ? [base] : [tag, base];
 }
 function read(table, key) {
   let value = table;

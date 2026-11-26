@@ -32,12 +32,15 @@ describe("languages", () => {
         expect(keys(language(code)).filter((key) => !english.has(key))).toEqual([]);
     });
 
-    it("are English and Finnish with the same texts, the two that ship complete", () => {
+    it("are English, Finnish and Brazilian Portuguese with the same texts, the three that ship complete", () => {
         expect(keys(language("fi")).sort()).toEqual(keys(language("en")).sort());
+        expect(keys(language("pt-br")).sort()).toEqual(keys(language("en")).sort());
     });
 
     it("fall back to English for a language with no file, and to the key for a text nobody has", () => {
         expect(translate("fi", "common.total")).toBe("Kokonaiskertymä");
+        expect(translate("pt-BR", "common.rate")).toBe("Intensidade");
+        expect(translate("pt_PT", "common.rate")).toBe("Rate");
         expect(translate("xx", "common.total")).toBe("Total");
         expect(translate("fi-FI", "common.total")).toBe("Kokonaiskertymä");
         expect(translate("fi", "no.such.key")).toBe("no.such.key");
